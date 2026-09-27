@@ -7,7 +7,7 @@ async function main() {
   const { rows: [u] } = await pool.query("select id from auth.users where email='demo@ledgr.ng'");
   await withUser(pool, u.id, async (db) => {
     const [{ id: b }] = await read<{ id: string }>(db, "select id from businesses limit 1");
-    const today = todayIn();
+    const today = process.env.TODAY ?? todayIn(); // TODAY=YYYY-MM-DD to check as of another date
     const counts = (await db.query(`select
       (select count(*) from sales where business_id=$1)::int sales, (select count(*) from purchases where business_id=$1)::int purchases,
       (select count(*) from production_batches where business_id=$1)::int batches, (select count(*) from expenses where business_id=$1)::int expenses,
