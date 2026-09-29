@@ -1,6 +1,7 @@
 "use server";
 import { z } from "zod";
 import { redirect } from "next/navigation";
+import { hasAccess, INVITE_ONLY_MESSAGE } from "@/lib/server/access";
 import { getUserId } from "@/lib/server/session";
 import { pool, withUser, rpc, humanError } from "@/lib/server/db";
 
@@ -20,6 +21,7 @@ const schema = z.object({
 export async function completeOnboarding(input: z.infer<typeof schema>): Promise<{ error: string } | void> {
   const userId = await getUserId();
   if (!userId) redirect("/login");
+  if (!(await hasAccess(userId))) return { error: INVITE_ONLY_MESSAGE };
   const p = schema.safeParse(input);
   if (!p.success) return { error: p.error.issues[0].message };
   const d = p.data;
