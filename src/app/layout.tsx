@@ -4,6 +4,10 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: { default: "Ledgr", template: "%s · Ledgr" },
   description: "Your business, clearly. Sales, profit, cash and stock in one calm place.",
+  applicationName: "Ledgr",
+  // iPhone "Add to Home Screen": opens full screen with a translucent status bar, named "Ledgr".
+  appleWebApp: { capable: true, title: "Ledgr", statusBarStyle: "default" },
+  formatDetection: { telephone: false },
 };
 
 export const viewport: Viewport = {
