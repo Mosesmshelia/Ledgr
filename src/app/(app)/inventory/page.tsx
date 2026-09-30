@@ -5,7 +5,7 @@ import { can } from "@/lib/permissions";
 import { Badge, ButtonLink, Card, EmptyState, Money, PageHeader, cn } from "@/components/ui/primitives";
 import { formatPercent, formatQty } from "@/lib/finance";
 import { InventoryTabs } from "./tabs";
-import { ProductSheetTrigger, EditProductButton } from "./product-sheet";
+import { ProductSheetTrigger, EditProductButton, RestoreProductButton } from "./product-sheet";
 import { ListControls, Pager, SortTh } from "@/components/app/list-controls";
 import { readListParams, LIST_PAGE_SIZE } from "@/lib/server/list";
 
@@ -25,6 +25,11 @@ export default async function InventoryPage({ searchParams }: { searchParams: Pr
            i.on_hand, i.value, i.avg_cost, i.low_stock, i.backordered
     from products p left join product_categories pc on pc.id = p.category_id join fin_inventory($1) i on i.product_id = p.id
     where p.business_id = $1 order by p.is_sellable desc, pc.name nulls last, p.name`, [ctx.business.id]);
+  // Archived products (removed by mistake-fix) are hidden from the lists above; shown on request so they can be restored.
+  const archived = await ctx.q<{ id: string; name: string; category: string | null }>(
+    "select p.id, p.name, pc.name category from products p left join product_categories pc on pc.id = p.category_id where p.business_id = $1 and not p.is_active order by p.name", [ctx.business.id]);
+  const showArchived = sp.archived === "1";
+  const canRemove = can(ctx.role, "void");
   const categories = [...new Set(rows.map((r) => r.category).filter(Boolean))] as string[];
   const total = rows.reduce((a, r) => a + r.value, 0);
   // Search, filter and sort in memory: every product's stock is already loaded for the totals.
@@ -62,16 +67,38 @@ export default async function InventoryPage({ searchParams }: { searchParams: Pr
           action={can(ctx.role, "record") ? <ButtonLink href="/inventory?add=1">Add a product</ButtonLink> : undefined} /></Card>
       ) : (
         <div className="flex flex-col gap-4">
-          {sellable.length > 0 && <ProductTable title="Products you sell" rows={sellable} categories={categories} canEdit={can(ctx.role, "record")} />}
-          {rawMaterials.length > 0 && <ProductTable title="Raw materials & packaging" rows={rawMaterials} categories={categories} raw canEdit={can(ctx.role, "record")} />}
+          {sellable.length > 0 && <ProductTable title="Products you sell" rows={sellable} categories={categories} canEdit={can(ctx.role, "record")} canRemove={canRemove} />}
+          {rawMaterials.length > 0 && <ProductTable title="Raw materials & packaging" rows={rawMaterials} categories={categories} raw canEdit={can(ctx.role, "record")} canRemove={canRemove} />}
           <Pager page={lp.page} hasMore={shown.length > lp.page * LIST_PAGE_SIZE} shown={pageRows.length} pageSize={LIST_PAGE_SIZE} />
         </div>
       )}
+      {archived.length > 0 && (showArchived ? (
+        <Card className="mt-4 overflow-hidden">
+          <div className="px-5 pt-4 pb-2 flex justify-between items-baseline gap-3">
+            <div>
+              <h2 className="text-headline font-semibold">Archived products</h2>
+              <p className="text-caption text-ink-2">Hidden from lists and new sales. Past reports still include them.</p>
+            </div>
+            <Link href="/inventory" className="tap text-body text-accent shrink-0">Hide</Link>
+          </div>
+          <ul>{archived.map((a) => (
+            <li key={a.id} className="flex items-center gap-3 px-5 py-2.5 border-t border-hairline">
+              <div className="flex-1 min-w-0">
+                <Link href={`/inventory/products/${a.id}`} className="tap text-body hover:text-accent">{a.name}</Link>
+                {a.category && <div className="text-caption text-ink-3">{a.category}</div>}
+              </div>
+              {canRemove && <RestoreProductButton id={a.id} name={a.name} />}
+            </li>
+          ))}</ul>
+        </Card>
+      ) : (
+        <p className="mt-4 text-center"><Link href="/inventory?archived=1" className="tap text-caption text-ink-2 hover:text-accent">Show archived products ({archived.length})</Link></p>
+      ))}
     </div>
   );
 }
 
-function ProductTable({ title, rows, categories, raw , canEdit }: { title: string; rows: Row[]; categories: string[]; raw?: boolean ; canEdit: boolean }) {
+function ProductTable({ title, rows, categories, raw, canEdit, canRemove }: { title: string; rows: Row[]; categories: string[]; raw?: boolean; canEdit: boolean; canRemove: boolean }) {
   return (
     <Card className="overflow-hidden">
       <div className="px-5 pt-4 pb-2 flex justify-between items-baseline">
@@ -103,7 +130,7 @@ function ProductTable({ title, rows, categories, raw , canEdit }: { title: strin
                     <td className="text-right num">{r.selling_price !== null ? <Money value={r.selling_price} /> : "—"}</td>
                     <td className="text-right num text-ink-2">{formatPercent(margin, 0)}</td>
                   </>}
-                  <td className="pr-3 text-right">{canEdit && <EditProductButton product={r} categories={categories} />}</td>
+                  <td className="pr-3 text-right">{canEdit && <EditProductButton product={r} categories={categories} canRemove={canRemove} />}</td>
                 </tr>
               );
             })}

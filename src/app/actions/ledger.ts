@@ -2,7 +2,8 @@
 // Every money-changing action in the app. Thin wrappers: validation of money logic lives in the database functions.
 import { z } from "zod";
 import { post, withCtx, type ActionResult } from "./_run";
-import { read } from "@/lib/server/db";
+import { read, rpc, humanError } from "@/lib/server/db";
+import { requireCtx } from "@/lib/server/session";
 
 const kobo = z.number().int().nonnegative();
 const qty = z.number().positive().max(1_000_000);
@@ -166,6 +167,26 @@ export async function saveProduct(input: { id?: string; name: string; sku?: stri
     }
     return id!;
   }));
+}
+
+/** What "Remove" would do for this product: delete / void_opening / archive / blocked / restore, with a plain-English message. */
+export async function checkProductRemoval(productId: string) {
+  if (!uuid.safeParse(productId).success) return { ok: false as const, error: "Product not found." };
+  const ctx = await requireCtx();
+  try {
+    const data = await ctx.db((db) => rpc<{ mode: "delete" | "void_opening" | "archive" | "blocked" | "restore"; message: string }>(
+      db, "product_removal_check", { business_id: ctx.business.id, product_id: productId }));
+    return { ok: true as const, data };
+  } catch (e) {
+    return { ok: false as const, error: humanError(e).message };
+  }
+}
+
+/** Remove a product entered by mistake (or restore an archived one). Money history is never deleted. */
+export async function removeProduct(input: { product_id: string; reason?: string }) {
+  const p = z.object({ product_id: uuid, reason: z.string().trim().max(200).optional() }).safeParse(input);
+  if (!p.success) return bad(p.error);
+  return post<"deleted" | "archived" | "restored">("remove_product", p.data);
 }
 
 export async function saveCustomer(input: { id?: string; name: string; phone?: string; email?: string; payment_terms_days?: number | null }) {

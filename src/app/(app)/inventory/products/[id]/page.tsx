@@ -4,7 +4,7 @@ import { ChevronLeft } from "lucide-react";
 import { requireCtx } from "@/lib/server/session";
 import { Badge, Card, Money, cn } from "@/components/ui/primitives";
 import { addDays, formatDate, formatPercent, formatQty, todayIn } from "@/lib/finance";
-import { EditProductButton } from "../../product-sheet";
+import { EditProductButton, RestoreProductButton } from "../../product-sheet";
 import { AdjustStockButton, VoidAdjustment } from "./adjust-stock";
 import { can } from "@/lib/permissions";
 
@@ -21,7 +21,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
   const { id } = await params;
   const b = ctx.business.id;
   const today = todayIn(ctx.business.timezone);
-  const [p] = await ctx.q<{ id: string; name: string; sku: string | null; unit: string; category: string | null; selling_price: number | null; standard_cost: number | null; min_stock: number; is_sellable: boolean }>(
+  const [p] = await ctx.q<{ id: string; name: string; sku: string | null; unit: string; category: string | null; selling_price: number | null; standard_cost: number | null; min_stock: number; is_sellable: boolean; is_active: boolean }>(
     "select p.*, pc.name category from products p left join product_categories pc on pc.id = p.category_id where p.id = $1 and p.business_id = $2", [id, b]);
   if (!p) notFound();
   const [inv] = await ctx.q<{ on_hand: number; value: number; avg_cost: number | null; low_stock: boolean; backordered: number }>("select * from fin_inventory($1) where product_id = $2", [b, id]);
@@ -41,13 +41,13 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
       <Link href="/inventory" className="tap inline-flex items-center gap-1 text-body text-accent mb-3"><ChevronLeft size={18} />Inventory</Link>
       <div className="flex items-start justify-between gap-3 mb-5">
         <div>
-          <h1 className="text-title font-semibold flex items-center gap-2">{p.name}{inv?.low_stock && <Badge tone="warning">Low stock</Badge>}</h1>
+          <h1 className="text-title font-semibold flex items-center gap-2">{p.name}{!p.is_active && <Badge>Archived</Badge>}{inv?.low_stock && <Badge tone="warning">Low stock</Badge>}</h1>
           <p className="text-body text-ink-2">{[p.category, p.sku, p.is_sellable ? null : "Raw material"].filter(Boolean).join(" · ")}</p>
         </div>
-        {canRecord && (
+        {!p.is_active ? (can(ctx.role, "void") && <RestoreProductButton id={p.id} name={p.name} size="md" />) : canRecord && (
           <div className="flex items-center gap-2">
             <AdjustStockButton product={{ id: p.id, name: p.name, unit: p.unit }} onHand={Number(inv?.on_hand ?? 0)} avgCost={inv?.avg_cost ?? p.standard_cost} today={today} />
-            <EditProductButton product={{ ...p }} categories={cats.map((c) => c.name)} />
+            <EditProductButton product={{ ...p }} categories={cats.map((c) => c.name)} canRemove={can(ctx.role, "void")} />
           </div>
         )}
       </div>
