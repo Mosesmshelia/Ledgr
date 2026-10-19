@@ -16,12 +16,12 @@ export function AuthForm({ mode, action, next, email, title, subtitle, demo = fa
     <div className="min-h-dvh grid place-items-center px-4 py-10">
       <div className="w-full max-w-[380px] animate-rise">
         <div className="flex flex-col items-center text-center mb-8">
-          <span className="size-12 rounded-[14px] bg-accent text-on-accent grid place-items-center font-semibold text-xl mb-5">L</span>
+          <span className="size-12 rounded-[14px] bg-[#111318] dark:bg-white text-white dark:text-[#111318] grid place-items-center font-bold text-xl mb-5">L</span>
           <h1 className="text-title font-semibold">{title ?? (mode === "login" ? "Welcome back" : "Create your account")}</h1>
           <p className="text-body text-ink-2 mt-1">{subtitle ?? (mode === "login" ? "Sign in to see how your business is doing." : "Know your numbers in minutes.")}</p>
         </div>
-        {notice && <p role="status" className="mb-4 rounded-[12px] bg-accent-soft text-ink px-4 py-3 text-body">{notice}</p>}
-        <form action={formAction} className="bg-surface rounded-[16px] border border-hairline p-5 flex flex-col gap-4">
+        {notice && <p role="status" className="mb-4 rounded-[14px] bg-accent-soft text-ink px-4 py-3 text-body">{notice}</p>}
+        <form action={formAction} className="bg-surface rounded-[20px] border border-hairline p-5 flex flex-col gap-4">
           {next && <input type="hidden" name="next" value={next} />}
           {mode === "signup" && (
             <Field label="Your name" htmlFor="name"><Input id="name" name="name" autoComplete="name" required placeholder="Moses Mshelia" /></Field>

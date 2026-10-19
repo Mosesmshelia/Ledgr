@@ -64,5 +64,5 @@ test("write off broken stock, then void it", async ({ page }) => {
   await page.getByRole("button", { name: "Void adjustment" }).click();
   await expect.poll(async () => Number(await stock())).toBe(before);
   await page.goto("/settings?tab=activity&table=stock_adjustments&action=void");
-  await expect(page.getByText("Reason: Recounted, it was fine")).toBeVisible();
+  await expect(page.getByText("Reason: Recounted, it was fine").first()).toBeVisible();
 });

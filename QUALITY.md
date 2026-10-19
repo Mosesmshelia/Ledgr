@@ -1,6 +1,6 @@
 # Ledgr quality bar — final check (Phase 5)
 
-Status on 27 Sep 2026: **every item is a yes.**
+Status on 19 Oct 2026 (Ledgr 2.0): **every item is a yes.**
 The brief's own checklist wasn't available as a file, so this list is rebuilt from its
 Design Direction (§9), Phase 5 wording and Final Handover (§12).
 Each item names the check that proves it, so anyone can run it again.
@@ -9,7 +9,7 @@ Each item names the check that proves it, so anyone can run it again.
 
 | Check | Result | How it's proven |
 |---|---|---|
-| Money stored and calculated in kobo; every split exact to the kobo | ✅ | `npm test` — 18 golden tests + 36 more (54 total) |
+| Money stored and calculated in kobo; every split exact to the kobo | ✅ | `npm test` — 64 tests |
 | Every dashboard figure matches an independent calculation from raw records | ✅ | `npm run verify` |
 | Opening stock + purchases − closing stock = cost of goods sold, including write-offs | ✅ | `npm run check:seed` → ✓ MATCH |
 | All 11 reports agree with each other, the dashboard, and their PDF / Excel / CSV files | ✅ | `npm run verify:reports` (39 cross-checks) |
@@ -36,7 +36,7 @@ Each item names the check that proves it, so anyone can run it again.
 
 | Check | Result | How it's proven |
 |---|---|---|
-| Zero automated violations on 32 screens × phone/desktop × light/dark (128 checks) | ✅ | `npm run audit` (axe-core) |
+| Zero automated violations on 33 screens × phone/desktop × light/dark (132 checks) | ✅ | `npm run audit` (axe-core) |
 | Text contrast at least 4.5:1 everywhere, in both themes | ✅ | Colour tokens re-tuned in Phase 5 (D-67) |
 | Works by keyboard: skip link, menus, sheets trap focus, Escape closes | ✅ | `e2e/a11y.spec.ts` |
 | Every field has a label; every icon button has a name | ✅ | `e2e/a11y.spec.ts` |
@@ -58,6 +58,6 @@ Each item names the check that proves it, so anyone can run it again.
 | Check | Result |
 |---|---|
 | Production build succeeds with strict TypeScript | ✅ |
-| 8 end-to-end flows pass (signup → onboarding → purchase → credit sale → dashboard; void; production; budget + PDF; invitation; stock write-off; keyboard; labels) | ✅ |
+| 12 end-to-end flows pass (incl. till, recipe batches, shopping list); (signup → onboarding → purchase → credit sale → dashboard; void; production; budget + PDF; invitation; stock write-off; keyboard; labels) | ✅ |
 | No hard deletes of financial records; everything voided with a reason and audited | ✅ |
 | README: structure, stack, schema, formulas, setup, env vars, tests, deploy, logins per role, limitations, next steps | ✅ |

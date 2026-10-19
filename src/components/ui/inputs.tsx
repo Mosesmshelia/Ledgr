@@ -40,11 +40,11 @@ export function QtyInput({ value, onChange, unit, className, id }: { value: numb
   useEffect(() => { if (Number(text) !== value) setText(String(value)); }, [value]); // eslint-disable-line react-hooks/exhaustive-deps
   const step = (d: number) => onChange(Math.max(0, Math.round((value + d) * 1000) / 1000));
   return (
-    <div className={cn("flex items-center h-11 rounded-[10px] bg-fill focus-within:ring-2 focus-within:ring-accent", className)}>
-      <button type="button" onClick={() => step(-1)} className="w-10 h-full grid place-items-center text-ink-2 text-lg active:scale-90" aria-label="Decrease">−</button>
+    <div className={cn("flex items-center h-11 rounded-[12px] bg-fill focus-within:ring-2 focus-within:ring-accent", className)}>
+      <button type="button" onClick={() => step(-1)} className="w-11 h-full grid place-items-center text-ink-2 text-lg active:scale-90" aria-label="Decrease">−</button>
       <input id={id} inputMode="decimal" className="w-full min-w-0 bg-transparent text-center num text-body outline-none" value={text} aria-label={`Quantity${unit && unit !== "unit" ? ` (${unit})` : ""}`}
         onChange={(e) => { const t = e.target.value.replace(/[^\d.]/g, ""); setText(t); const n = Number(t); if (!Number.isNaN(n)) onChange(n); }} />
-      <button type="button" onClick={() => step(1)} className="w-10 h-full grid place-items-center text-ink-2 text-lg active:scale-90" aria-label="Increase">+</button>
+      <button type="button" onClick={() => step(1)} className="w-11 h-full grid place-items-center text-ink-2 text-lg active:scale-90" aria-label="Increase">+</button>
     </div>
   );
 }
@@ -96,7 +96,7 @@ export function Combobox({ options, value, onChange, placeholder = "Search…", 
         </button>
       )}
       {open && (
-        <div className="absolute z-30 mt-1.5 w-full bg-raised border border-hairline rounded-[12px] shadow-[var(--shadow-sheet)] overflow-hidden animate-[rise_140ms_var(--ease-apple)]">
+        <div className="absolute z-30 mt-1.5 w-full bg-raised border border-hairline rounded-[14px] shadow-[var(--shadow-sheet)] overflow-hidden animate-[rise_140ms_var(--ease-apple)]">
           <ul id={listId} role="listbox" className="max-h-72 overflow-y-auto p-1">
             {filtered.length === 0 && <li className="px-3 py-3 text-body text-ink-2">No matches</li>}
             {filtered.map((o, i) => (

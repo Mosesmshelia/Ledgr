@@ -22,7 +22,7 @@ export default async function InvitePage({ params }: { params: Promise<{ token: 
   return (
     <div className="min-h-dvh grid place-items-center px-4 py-10">
       <div className="w-full max-w-[400px] animate-rise text-center">
-        <span className="mx-auto size-12 rounded-[14px] bg-accent text-on-accent grid place-items-center font-semibold text-xl mb-5">L</span>
+        <span className="mx-auto size-12 rounded-[14px] bg-[#111318] dark:bg-white text-white dark:text-[#111318] grid place-items-center font-bold text-xl mb-5">L</span>
         {problem ? (
           <>
             <h1 className="text-title font-semibold">Can&apos;t use this link</h1>
@@ -33,13 +33,13 @@ export default async function InvitePage({ params }: { params: Promise<{ token: 
           <>
             <h1 className="text-title font-semibold">Join {inv.business}</h1>
             <p className="text-body text-ink-2 mt-2">You&apos;ve been invited as <span className="text-ink font-medium">{ROLE_INFO[inv.role as Role].label}</span>. {ROLE_INFO[inv.role as Role].summary}</p>
-            <div className="bg-surface rounded-[16px] border border-hairline p-5 mt-6 text-left">
+            <div className="bg-surface rounded-[20px] border border-hairline p-5 mt-6 text-left">
               <div className="text-caption text-ink-2">Invitation for</div>
               <div className="text-body font-medium">{inv.email}</div>
               {!userId ? (
                 <div className="flex flex-col gap-2 mt-5">
-                  <Link href={`/signup?next=${encodeURIComponent(next)}&email=${encodeURIComponent(inv.email)}`} className="h-12 rounded-[12px] bg-accent text-on-accent grid place-items-center font-medium">Create an account</Link>
-                  <Link href={`/login?next=${encodeURIComponent(next)}&email=${encodeURIComponent(inv.email)}`} className="h-12 rounded-[12px] bg-fill grid place-items-center font-medium">I already have an account</Link>
+                  <Link href={`/signup?next=${encodeURIComponent(next)}&email=${encodeURIComponent(inv.email)}`} className="h-12 rounded-[14px] bg-accent text-on-accent grid place-items-center font-medium">Create an account</Link>
+                  <Link href={`/login?next=${encodeURIComponent(next)}&email=${encodeURIComponent(inv.email)}`} className="h-12 rounded-[14px] bg-fill grid place-items-center font-medium">I already have an account</Link>
                 </div>
               ) : me !== inv.email ? (
                 <p className="text-caption text-negative mt-4">You&apos;re signed in as {me}. Sign out and sign in with {inv.email} to accept.</p>

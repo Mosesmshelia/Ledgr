@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/primitives";
-import { NewCustomerSheet } from "./new/sale-form";
+import { NewCustomerSheet } from "@/components/app/customer-sheet";
 
 export function CustomerSheetTrigger({ open: initial }: { open: boolean }) {
   const [open, setOpen] = useState(initial);

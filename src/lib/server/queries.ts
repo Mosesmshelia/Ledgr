@@ -89,8 +89,8 @@ export async function formOptions(ctx: Ctx) {
       where p.business_id = $1 and p.is_active order by p.is_sellable desc, p.name`, [b]).catch(async () =>
       ctx.q<{ id: string; name: string; sku: string | null; unit: string; selling_price: number | null; standard_cost: number | null; on_hand: number; avg_cost: number | null; is_sellable: boolean; category: string | null }>(
         "select p.id, p.name, p.sku, p.unit, p.selling_price, null::bigint standard_cost, p.is_sellable, null category, 0 on_hand, null::bigint avg_cost from products p where p.business_id=$1 and p.is_active order by p.name", [b])),
-    await ctx.q<{ id: string; name: string; is_walk_in: boolean; payment_terms_days: number | null }>(
-      "select id, name, is_walk_in, payment_terms_days from customers where business_id = $1 order by is_walk_in desc, name", [b]),
+    await ctx.q<{ id: string; name: string; is_walk_in: boolean; payment_terms_days: number | null; phone: string | null }>(
+      "select id, name, is_walk_in, payment_terms_days, phone from customers where business_id = $1 order by is_walk_in desc, name", [b]),
     await ctx.q<{ id: string; name: string; type: string }>("select id, name, type from cash_accounts where business_id = $1 and is_active order by created_at", [b]),
     await ctx.q<{ id: string; name: string }>("select id, name from suppliers where business_id = $1 order by name", [b]),
   ];

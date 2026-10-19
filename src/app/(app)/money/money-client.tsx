@@ -111,7 +111,7 @@ export function AddAccountButton() {
   const router = useRouter();
   return (
     <>
-      <button onClick={() => setOpen(true)} className="rounded-[16px] border border-dashed border-hairline-strong p-5 text-body text-ink-2 hover:text-ink hover:bg-surface flex items-center justify-center gap-2 min-h-[104px]"><Plus size={17} />Add account</button>
+      <button onClick={() => setOpen(true)} className="rounded-[20px] border border-dashed border-hairline-strong p-5 text-body text-ink-2 hover:text-ink hover:bg-surface flex items-center justify-center gap-2 min-h-[104px]"><Plus size={17} />Add account</button>
       <Sheet open={open} onClose={() => setOpen(false)} title="Add account"
         footer={<Button size="lg" className="w-full" disabled={pending} onClick={() => start(async () => {
           const r = await saveCashAccount({ name, type, opening_balance: opening ?? 0, opening_date: new Date().toISOString().slice(0, 10) });

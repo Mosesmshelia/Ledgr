@@ -9,7 +9,7 @@ import { ProductSheetTrigger, EditProductButton, RestoreProductButton } from "./
 import { ListControls, Pager, SortTh } from "@/components/app/list-controls";
 import { readListParams, LIST_PAGE_SIZE } from "@/lib/server/list";
 
-export const metadata = { title: "Inventory" };
+export const metadata = { title: "Stock" };
 
 interface Row {
   id: string; name: string; sku: string | null; unit: string; category: string | null; selling_price: number | null; standard_cost: number | null;
@@ -50,7 +50,7 @@ export default async function InventoryPage({ searchParams }: { searchParams: Pr
 
   return (
     <div className="animate-rise">
-      <PageHeader title="Inventory" subtitle={<>Stock worth <Money value={total} className="text-ink font-medium" /> at cost (first-in, first-out).</>}
+      <PageHeader title="Stock" subtitle={<>Stock worth <Money value={total} className="text-ink font-medium" /> at cost (first-in, first-out).</>}
         actions={can(ctx.role, "record") ? <><ButtonLink variant="secondary" href="/inventory/purchases/new">Add purchase</ButtonLink><ProductSheetTrigger open={sp.add === "1"} categories={categories} /></> : undefined} />
       <InventoryTabs active="products" />
       {rows.length > 0 && <ListControls search="Search name, SKU or category" dates={false}
@@ -105,7 +105,20 @@ function ProductTable({ title, rows, categories, raw, canEdit, canRemove }: { ti
         <h2 className="text-headline font-semibold">{title}</h2>
         <span className="text-caption text-ink-2 num"><Money value={rows.reduce((a, r) => a + r.value, 0)} /></span>
       </div>
-      <div className="overflow-x-auto" tabIndex={0} role="region" aria-label="Table (scrolls sideways on small screens)">
+      {/* Phones: simple rows */}
+      <ul className="sm:hidden">
+        {rows.map((r) => (
+          <li key={r.id} className="flex items-center gap-3 px-5 py-3 border-t border-hairline">
+            <Link href={`/inventory/products/${r.id}`} className="flex-1 min-w-0">
+              <span className="flex items-center gap-1.5"><span className="text-body font-medium truncate">{r.name}</span>{r.low_stock && r.on_hand > 0 && <Badge tone="warning">Low</Badge>}</span>
+              <span className="block text-caption text-ink-2 num">{raw ? <Money value={r.value} /> : r.selling_price !== null ? <><Money value={r.selling_price} /> each</> : "No price"}</span>
+            </Link>
+            <span className={cn("text-body font-semibold num text-right", r.on_hand <= 0 ? "text-negative" : r.low_stock ? "text-warning" : "")}>{r.on_hand <= 0 ? "Out" : formatQty(r.on_hand, r.unit)}</span>
+            {canEdit && <EditProductButton product={r} categories={categories} canRemove={canRemove} />}
+          </li>
+        ))}
+      </ul>
+      <div className="hidden sm:block overflow-x-auto" tabIndex={0} role="region" aria-label="Table (scrolls sideways on small screens)">
         <table className="w-full text-body min-w-[640px]">
           <thead>
             <tr className="text-caption text-ink-2 text-left">

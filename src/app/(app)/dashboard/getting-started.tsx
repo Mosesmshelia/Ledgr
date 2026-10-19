@@ -38,7 +38,7 @@ export async function GettingStarted({ ctx }: { ctx: Ctx }) {
       <ol className="mt-4 flex flex-col">
         {steps.map((s, i) => (
           <li key={s.title}>
-            <Link href={s.href} className={cn("flex items-center gap-4 rounded-[12px] px-3 py-3 -mx-3 hover:bg-fill transition-colors", i === next && "bg-accent-soft hover:bg-accent-soft")}>
+            <Link href={s.href} className={cn("flex items-center gap-4 rounded-[14px] px-3 py-3 -mx-3 hover:bg-fill transition-colors", i === next && "bg-accent-soft hover:bg-accent-soft")}>
               <span className={cn("size-7 shrink-0 rounded-full grid place-items-center text-caption font-semibold",
                 s.done ? "bg-positive text-white" : i === next ? "bg-accent text-on-accent" : "bg-fill text-ink-2")} aria-hidden>
                 {s.done ? <Check size={15} strokeWidth={3} /> : i + 1}

@@ -1,12 +1,13 @@
 import Link from "next/link";
-import { ChevronRight, PackageOpen, ShoppingCart, Sparkles, Target } from "lucide-react";
+import { ChevronDown, ChevronRight, FlaskConical, Plus, ShoppingBasket, ShoppingCart, Sparkles, Target, Truck, UserRound, Wallet } from "lucide-react";
 import { requireCtx } from "@/lib/server/session";
 import { loadDashboard } from "@/lib/server/dashboard";
 import { PeriodSelector } from "@/components/app/period-selector";
 import { parsePeriodParams } from "@/lib/period-params";
 import { TrendSection } from "@/components/app/charts-lazy";
-import { MetricCard, StatusNote } from "@/components/ui/metric";
-import { ButtonLink, Card, EmptyState, Money, Percent, cn } from "@/components/ui/primitives";
+import { MetricCard, StatusNote, Trend } from "@/components/ui/metric";
+import { CountUpMoney, MiniBars } from "@/components/ui/motion";
+import { Card, EmptyState, Money, Percent, cn } from "@/components/ui/primitives";
 import { formatMoney, formatPercent, formatRange } from "@/lib/finance";
 import { listAlerts, refreshAlerts } from "@/lib/server/alerts";
 import { AlertsCard } from "@/components/app/alerts";
@@ -14,7 +15,7 @@ import { SalesHome } from "./sales-home";
 import { GettingStarted } from "./getting-started";
 import { can } from "@/lib/permissions";
 
-export const metadata = { title: "Dashboard" };
+export const metadata = { title: "Today" };
 
 function greeting(tz: string) {
   const h = Number(new Intl.DateTimeFormat("en-GB", { hour: "numeric", hour12: false, timeZone: tz }).format(new Date()));
@@ -25,7 +26,7 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
   const ctx = await requireCtx();
   if (!ctx.canSeeCosts) return <SalesHome ctx={ctx} />;
   const sp = await searchParams;
-  const { key, custom } = parsePeriodParams(sp, "this_week");
+  const { key, custom } = parsePeriodParams(sp, "today");
   const d = await loadDashboard(ctx, key, custom);
   await refreshAlerts(ctx); // usually instant (throttled / already running from the layout)
   const alerts = await listAlerts(ctx);
@@ -35,71 +36,131 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
   const range = `period=custom&from=${d.period.from}&to=${d.period.to}`;
   const tone = { positive: "text-positive", negative: "text-negative", warning: "text-warning", neutral: "" } as const;
 
+  const days = d.trends.daily.slice(-7);
+  const canRecord = can(ctx.role, "record");
+
   return (
     <div className="animate-rise">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between mb-6">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between mb-5">
         <div className="min-w-0">
-          <h1 className="text-title sm:text-[1.75rem] sm:leading-9 font-semibold tracking-tight">
-            {greeting(ctx.business.timezone)}{ctx.displayName ? `, ${ctx.displayName}` : ""}
-          </h1>
-          <p className="text-body text-ink-2 mt-0.5">
-            Here&apos;s how {ctx.business.name} is doing {d.word} <span className="text-ink-3 whitespace-nowrap">· {formatRange(d.period.from, d.period.to)}</span>
-          </p>
+          <p className="text-caption text-ink-2">{greeting(ctx.business.timezone)}{ctx.displayName ? `, ${ctx.displayName}` : ""} · {formatRange(d.period.from, d.period.to)}</p>
+          <h1 className="text-display-sm sm:text-display font-bold font-display capitalize">{d.word}</h1>
         </div>
         <PeriodSelector value={key} basePath="/dashboard" from={custom?.from} to={custom?.to} today={d.today} />
       </div>
 
-      <div className="mb-3 empty:hidden"><AlertsCard alerts={alerts} /></div>
-
       {!hasData ? (
-        can(ctx.role, "record") ? <GettingStarted ctx={ctx} /> : (
+        canRecord ? <GettingStarted ctx={ctx} /> : (
           <Card><EmptyState icon={<ShoppingCart size={22} />} title="No sales yet" body="Once sales are recorded, revenue, profit and cash will appear here." /></Card>
         )
       ) : (
         <>
           {pnl.status !== "complete" && (
-            <div className="mb-4"><StatusNote status={pnl.status} note={pnl.statusNote} href="/sales?status=missing" /></div>
+            <div className="mb-3"><StatusNote status={pnl.status} note={pnl.statusNote} href="/sales?status=missing" /></div>
           )}
 
-          {/* Hero metrics */}
-          <section aria-label="Key figures" className="grid grid-cols-2 lg:grid-cols-5 gap-3">
-            <MetricCard label="Revenue" value={pnl.revenue} comparison={d.compare.revenue} vs={vs}
-              sub={`${pnl.salesCount} sale${pnl.salesCount === 1 ? "" : "s"}`}
-              explain={pnl.metrics.revenue.explain} steps={pnl.metrics.revenue.steps} href={`/sales?${range}`} />
-            <MetricCard label="Gross profit" value={pnl.grossProfit} tone="profit" comparison={d.compare.grossProfit} vs={vs}
-              sub={<><Percent value={pnl.grossMargin} /> margin · goods cost <Money value={pnl.cogs} compact /></>} status={pnl.status} note={pnl.statusNote}
-              explain={pnl.metrics.grossProfit.explain} steps={pnl.metrics.grossProfit.steps} href={`/sales?${range}`} />
-            <MetricCard label="Operating expenses" value={pnl.operatingExpenses} comparison={d.compare.opex} vs={vs} higherIsBetter={false}
-              sub={pnl.revenue > 0 ? <>{formatPercent(pnl.operatingExpenses / pnl.revenue, 0)} of revenue</> : "Rent, fuel, salaries…"}
-              explain={pnl.metrics.operatingExpenses.explain} steps={pnl.metrics.operatingExpenses.steps} href={`/expenses?${range}`} />
-            <MetricCard label="Net profit" value={pnl.netProfit} tone="profit" comparison={d.compare.netProfit} vs={vs}
-              sub={<><Percent value={pnl.netMargin} /> margin</>} status={pnl.status} note={pnl.statusNote}
-              explain={pnl.metrics.netProfit.explain} steps={pnl.metrics.netProfit.steps} href={`/reports/pnl?${range}`} />
-            <div className="col-span-2 lg:col-span-1">
-              <MetricCard label="Money you have" value={d.cash.closing} comparison={d.compare.cash} vs={vs}
-                sub={`Across ${d.cashAccounts.length} account${d.cashAccounts.length === 1 ? "" : "s"}`}
-                explain="Cash in hand, bank and POS balances at the end of this period."
-                steps={[
-                  { label: "Opening balance", amount: d.cash.opening },
-                  { label: "Money in", amount: d.cash.cashIn, op: "+" },
-                  { label: "Money out", amount: d.cash.cashOut, op: "−" },
-                  { label: "Closing balance", amount: d.cash.closing, op: "=" },
-                  ...d.cashAccounts.map((a) => ({ label: `· ${a.name}`, amount: a.closing })),
-                ]}
-                href={`/money?tab=cashflow&${range}`} />
-            </div>
-          </section>
+          <div className="grid grid-cols-[minmax(0,1fr)] lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] gap-3 stagger">
+            {/* Hero: sales, profit, last 7 days */}
+            <Card className="p-5 sm:p-6 flex flex-col gap-4 min-w-0">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="text-caption font-medium text-ink-2">Sales</div>
+                  <CountUpMoney value={pnl.revenue} className="block text-[2.75rem] leading-[1] sm:text-[3.25rem] font-bold tracking-[-0.04em] mt-1.5" />
+                  <div className="mt-2"><Trend c={d.compare.revenue} vs={vs} /></div>
+                </div>
+                <Link href={`/sales?${range}`} className="tap text-caption text-accent font-medium shrink-0">{pnl.salesCount} sale{pnl.salesCount === 1 ? "" : "s"}<ChevronRight size={14} /></Link>
+              </div>
+              <div>
+                <MiniBars values={days.map((x) => Math.max(0, x.revenue))} labels={days.map((x) => `${x.label}: ${formatMoney(x.revenue)}`)} />
+                <div className="flex justify-between text-[11px] text-ink-3 mt-1.5 num" aria-hidden>
+                  <span>{days[0]?.label}</span><span>Today</span>
+                </div>
+                <p className="sr-only">Last 7 days of sales: {days.map((x) => `${x.label} ${formatMoney(x.revenue)}`).join(", ")}.</p>
+              </div>
+              <dl className="grid grid-cols-2 gap-3 pt-4 border-t border-hairline">
+                <div>
+                  <dt className="text-caption text-ink-2">Profit after product costs</dt>
+                  <dd className={cn("text-headline font-semibold num mt-0.5", pnl.grossProfit < 0 && "text-negative")}><Money value={pnl.grossProfit} /></dd>
+                </div>
+                <div>
+                  <dt className="text-caption text-ink-2">After all expenses</dt>
+                  <dd className={cn("text-headline font-semibold num mt-0.5", pnl.netProfit < 0 && "text-negative")}><Money value={pnl.netProfit} /></dd>
+                </div>
+              </dl>
+            </Card>
 
-          {/* Secondary metrics */}
-          <section aria-label="Balances" className="grid grid-cols-2 lg:grid-cols-4 gap-3 mt-3">
-            <Secondary href="/money?tab=receivables" label="Customers owe you" value={d.receivables.total}
-              sub={d.receivables.overdue > 0 ? <span className="text-negative">{formatMoney(d.receivables.overdue, { compact: true })} overdue</span> : "Nothing overdue"} />
-            <Secondary href="/money?tab=payables" label="You owe suppliers" value={d.payables.total}
-              sub={d.payables.overdue > 0 ? <span className="text-negative">{formatMoney(d.payables.overdue, { compact: true })} overdue</span> : `${d.payables.count} open bill${d.payables.count === 1 ? "" : "s"}`} />
-            <Secondary href="/inventory" label="Stock value" value={d.inventoryValue}
-              sub={d.lowStock.length ? <span className="text-warning">{d.lowStock.length} running low</span> : "Stock levels OK"} />
-            <TargetCard {...d.salesTarget} canSet={can(ctx.role, "settings")} />
-          </section>
+            <div className="flex flex-col gap-3 min-w-0">
+              {/* Big actions */}
+              <div className="grid grid-cols-2 gap-3">
+                {can(ctx.role, "sell") && (
+                  <Link href="/sales/new" className="press h-[60px] rounded-[18px] bg-accent text-on-accent font-semibold text-headline flex items-center justify-center gap-2 shadow-[0_8px_20px_rgba(47,91,234,0.25)]">
+                    <Plus size={20} strokeWidth={2.6} />New sale
+                  </Link>
+                )}
+                {canRecord && (
+                  <Link href="/inventory/production/new" className="press h-[60px] rounded-[18px] bg-surface border border-hairline font-medium text-headline flex items-center justify-center gap-2">
+                    <FlaskConical size={19} className="text-accent" />Made a batch
+                  </Link>
+                )}
+              </div>
+
+              {/* Plain rows */}
+              <Card className="overflow-hidden">
+                <ul className="divide-y divide-hairline">
+                  <TodayRow href={`/money?tab=cashflow&${range}`} icon={<Wallet size={18} />} label="Cash & bank" value={<Money value={d.cash.closing} />} />
+                  <TodayRow href="/money?tab=receivables" icon={<UserRound size={18} />} label="Customers owe you"
+                    value={<Money value={d.receivables.total} />}
+                    sub={d.receivables.overdue > 0 ? <span className="text-negative">{formatMoney(d.receivables.overdue)} overdue</span> : undefined} />
+                  <TodayRow href="/money?tab=payables" icon={<Truck size={18} />} label="You owe suppliers" value={<Money value={d.payables.total} />}
+                    sub={d.payables.overdue > 0 ? <span className="text-negative">{formatMoney(d.payables.overdue)} overdue</span> : undefined} />
+                  <TodayRow href="/shopping" icon={<ShoppingBasket size={18} />} tone={d.lowStock.length ? "warning" : undefined} label="Running low"
+                    value={d.lowStock.length ? <span className="text-warning">{d.lowStock.length} item{d.lowStock.length === 1 ? "" : "s"}</span> : <span className="text-ink-2">All good</span>}
+                    sub={d.lowStock.length ? <span>{d.lowStock.slice(0, 3).map((p) => p.name).join(", ")}{d.lowStock.length > 3 ? "…" : ""}</span> : undefined} />
+                </ul>
+              </Card>
+              <TargetCard {...d.salesTarget} canSet={can(ctx.role, "settings")} />
+            </div>
+          </div>
+
+          <div className="mt-3 empty:hidden"><AlertsCard alerts={alerts} /></div>
+
+          <details className="group mt-5">
+            <summary className="list-none cursor-pointer select-none flex items-center justify-center gap-1.5 h-11 rounded-full bg-surface border border-hairline text-body font-medium text-ink-2 hover:text-ink mx-auto w-fit px-5 [&::-webkit-details-marker]:hidden">
+              <span className="group-open:hidden">See the full picture</span><span className="hidden group-open:inline">Hide details</span>
+              <ChevronDown size={17} className="transition-transform group-open:rotate-180" />
+            </summary>
+            <div className="mt-4 animate-rise">
+              <section aria-label="Key figures" className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                <MetricCard label="Revenue" value={pnl.revenue} comparison={d.compare.revenue} vs={vs}
+                  sub={`${pnl.salesCount} sale${pnl.salesCount === 1 ? "" : "s"}`}
+                  explain={pnl.metrics.revenue.explain} steps={pnl.metrics.revenue.steps} href={`/sales?${range}`} />
+                <MetricCard label="Gross profit" value={pnl.grossProfit} tone="profit" comparison={d.compare.grossProfit} vs={vs}
+                  sub={<><Percent value={pnl.grossMargin} /> margin · goods cost <Money value={pnl.cogs} compact /></>} status={pnl.status} note={pnl.statusNote}
+                  explain={pnl.metrics.grossProfit.explain} steps={pnl.metrics.grossProfit.steps} href={`/sales?${range}`} />
+                <MetricCard label="Operating expenses" value={pnl.operatingExpenses} comparison={d.compare.opex} vs={vs} higherIsBetter={false}
+                  sub={pnl.revenue > 0 ? <>{formatPercent(pnl.operatingExpenses / pnl.revenue, 0)} of revenue</> : "Rent, fuel, salaries…"}
+                  explain={pnl.metrics.operatingExpenses.explain} steps={pnl.metrics.operatingExpenses.steps} href={`/expenses?${range}`} />
+                <MetricCard label="Net profit" value={pnl.netProfit} tone="profit" comparison={d.compare.netProfit} vs={vs}
+                  sub={<><Percent value={pnl.netMargin} /> margin</>} status={pnl.status} note={pnl.statusNote}
+                  explain={pnl.metrics.netProfit.explain} steps={pnl.metrics.netProfit.steps} href={`/reports/pnl?${range}`} />
+                <div className="col-span-2 lg:col-span-2">
+                  <MetricCard label="Money you have" value={d.cash.closing} comparison={d.compare.cash} vs={vs}
+                    sub={`Across ${d.cashAccounts.length} account${d.cashAccounts.length === 1 ? "" : "s"}`}
+                    explain="Cash in hand, bank and POS balances at the end of this period."
+                    steps={[
+                      { label: "Opening balance", amount: d.cash.opening },
+                      { label: "Money in", amount: d.cash.cashIn, op: "+" },
+                      { label: "Money out", amount: d.cash.cashOut, op: "−" },
+                      { label: "Closing balance", amount: d.cash.closing, op: "=" },
+                      ...d.cashAccounts.map((a) => ({ label: `· ${a.name}`, amount: a.closing })),
+                    ]}
+                    href={`/money?tab=cashflow&${range}`} />
+                </div>
+                <div className="col-span-2 lg:col-span-2">
+                  <Secondary href="/inventory" label="Stock value" value={d.inventoryValue}
+                    sub={d.lowStock.length ? <span className="text-warning">{d.lowStock.length} running low</span> : "Stock levels OK"} />
+                </div>
+              </section>
 
           {/* Plain-English insight */}
           {d.summary.length > 0 && (
@@ -222,21 +283,27 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
             </Card>
           </div>
 
-          {d.lowStock.length > 0 && (
-            <Card className="p-5 mt-3">
-              <div className="flex items-center gap-2 mb-2"><PackageOpen size={18} className="text-warning" /><h2 className="text-headline font-semibold">Running low</h2></div>
-              <div className="flex flex-wrap gap-2">
-                {d.lowStock.map((p) => (
-                  <Link key={p.product_id} href={`/inventory/products/${p.product_id}`} className="inline-flex items-center gap-1.5 h-8 px-3 rounded-full bg-warning-soft text-caption">
-                    <span className="text-ink">{p.name}</span><span className="text-warning font-medium num">{p.on_hand} left</span>
-                  </Link>
-                ))}
-              </div>
-            </Card>
-          )}
+            </div>
+          </details>
         </>
       )}
     </div>
+  );
+}
+
+function TodayRow({ href, icon, label, value, sub, tone }: { href: string; icon: React.ReactNode; label: string; value: React.ReactNode; sub?: React.ReactNode; tone?: "warning" }) {
+  return (
+    <li>
+      <Link href={href} className="press flex items-center gap-3 px-4 py-3.5 hover:bg-fill/60 transition-colors">
+        <span className={cn("size-9 rounded-[11px] grid place-items-center shrink-0", tone === "warning" ? "bg-warning-soft text-warning" : "bg-accent-soft text-accent")}>{icon}</span>
+        <span className="flex-1 min-w-0">
+          <span className="block text-body">{label}</span>
+          {sub && <span className="block text-caption text-ink-2 truncate">{sub}</span>}
+        </span>
+        <span className="text-body font-semibold num">{value}</span>
+        <ChevronRight size={16} className="text-ink-3 shrink-0" />
+      </Link>
+    </li>
   );
 }
 
@@ -246,7 +313,7 @@ function Row({ l, v }: { l: string; v: React.ReactNode }) {
 
 function Secondary({ href, label, value, sub }: { href: string; label: string; value: number; sub: React.ReactNode }) {
   return (
-    <Link href={href} className="group bg-surface rounded-[16px] border border-hairline p-4 hover:border-hairline-strong transition-colors">
+    <Link href={href} className="group bg-surface rounded-[20px] border border-hairline p-4 hover:border-hairline-strong transition-colors">
       <div className="flex items-center justify-between text-caption font-medium text-ink-2">{label}<ChevronRight size={15} className="text-ink-3 group-hover:translate-x-0.5 transition-transform" /></div>
       <div className="text-title font-semibold num mt-1.5"><Money value={value} compact /></div>
       <div className="text-caption text-ink-2 mt-0.5">{sub}</div>
@@ -257,7 +324,7 @@ function Secondary({ href, label, value, sub }: { href: string; label: string; v
 function TargetCard({ label, amount, current, canSet }: { label: string; amount: number | null; current: number; canSet: boolean }) {
   if (!amount) {
     return (
-      <div className="bg-surface rounded-[16px] border border-hairline p-4">
+      <div className="bg-surface rounded-[20px] border border-hairline p-4">
         <div className="text-caption font-medium text-ink-2">Sales target</div>
         <div className="text-body text-ink-2 mt-2">No target set yet.</div>
         {canSet && <Link href="/settings?tab=targets" className="tap text-caption text-accent font-medium">Set a target</Link>}
@@ -266,7 +333,7 @@ function TargetCard({ label, amount, current, canSet }: { label: string; amount:
   }
   const pct = current / amount;
   return (
-    <div className="bg-surface rounded-[16px] border border-hairline p-4">
+    <div className="bg-surface rounded-[20px] border border-hairline p-4">
       <div className="text-caption font-medium text-ink-2">{label}</div>
       <div className="text-title font-semibold num mt-1.5">{formatPercent(pct, 0)}</div>
       <div className="h-1.5 rounded-full bg-fill mt-2 overflow-hidden" role="progressbar" aria-valuenow={Math.round(pct * 100)} aria-valuemin={0} aria-valuemax={100} aria-label={label}>

@@ -33,8 +33,8 @@ export default async function ProductionPage({ searchParams }: { searchParams: P
   const filtered = !!(lp.q || lp.from || lp.to || lp.state);
   return (
     <div className="animate-rise">
-      <PageHeader title="Inventory" subtitle="What you make. Each batch's total cost ÷ units made = the cost of every unit."
-        actions={can(ctx.role, "record") ? <ButtonLink href="/inventory/production/new">New batch</ButtonLink> : undefined} />
+      <PageHeader title="Stock" subtitle="What you make. Each batch's total cost ÷ units made = the cost of every unit."
+        actions={can(ctx.role, "record") ? <ButtonLink href="/inventory/production/new">Made a batch</ButtonLink> : undefined} />
       <InventoryTabs active="production" />
       <ListControls search="Search product or batch number"
         filters={[{ param: "state", label: "Batch status", options: [{ value: "active", label: "Active" }, { value: "voided", label: "Voided" }] }]}

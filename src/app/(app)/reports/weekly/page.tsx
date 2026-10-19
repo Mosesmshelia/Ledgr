@@ -28,9 +28,9 @@ export default async function WeeklyReport({ searchParams }: { searchParams: Pro
           <p className="text-body text-ink-2">{formatRange(r.period.from, r.isCurrent ? r.fullEnd : r.period.to)}{r.isCurrent && " · so far"}</p>
         </div>
         <div className="flex items-center gap-2 print:hidden">
-          <Link href={`/reports/weekly?week=${r.prevWeek}`} className="size-10 grid place-items-center rounded-[10px] bg-fill hover:bg-fill-hover" aria-label="Previous week"><ChevronLeft size={18} /></Link>
-          {r.nextWeek ? <Link href={`/reports/weekly?week=${r.nextWeek}`} className="size-10 grid place-items-center rounded-[10px] bg-fill hover:bg-fill-hover" aria-label="Next week"><ChevronRight size={18} /></Link>
-            : <span className="size-10 grid place-items-center rounded-[10px] bg-fill opacity-40" aria-hidden><ChevronRight size={18} /></span>}
+          <Link href={`/reports/weekly?week=${r.prevWeek}`} className="size-10 grid place-items-center rounded-[12px] bg-fill hover:bg-fill-hover" aria-label="Previous week"><ChevronLeft size={18} /></Link>
+          {r.nextWeek ? <Link href={`/reports/weekly?week=${r.nextWeek}`} className="size-10 grid place-items-center rounded-[12px] bg-fill hover:bg-fill-hover" aria-label="Next week"><ChevronRight size={18} /></Link>
+            : <span className="size-10 grid place-items-center rounded-[12px] bg-fill opacity-40" aria-hidden><ChevronRight size={18} /></span>}
           <ExportMenu kind="weekly" query={`week=${r.period.from}`} />
         </div>
       </div>

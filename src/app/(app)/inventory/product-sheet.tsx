@@ -127,7 +127,7 @@ function ProductSheet({ open, onClose: close, categories, product, canRemove }: 
           <Field label="Warn me below" htmlFor="pm" hint="Low-stock alert level."><Input id="pm" inputMode="decimal" value={min} onChange={(e) => setMin(e.target.value.replace(/[^\d.]/g, ""))} placeholder="0" /></Field>
         </div>
         {!product && (
-          <div className="rounded-[12px] bg-surface-2 border border-hairline p-4 flex flex-col gap-3">
+          <div className="rounded-[14px] bg-surface-2 border border-hairline p-4 flex flex-col gap-3">
             <div className="text-body font-medium">Stock you already have <span className="text-ink-3 font-normal">(optional)</span></div>
             <div className="grid grid-cols-2 gap-3">
               <Field label="Quantity" htmlFor="oq"><Input id="oq" inputMode="decimal" value={openingQty} onChange={(e) => setOpeningQty(e.target.value.replace(/[^\d.]/g, ""))} placeholder="0" /></Field>

@@ -55,30 +55,38 @@ test("sign up → onboarding → purchase → credit sale → correct dashboard"
   await page.waitForURL("**/inventory/purchases");
   await expect(page.getByText("Fresh Fruit Co")).toBeVisible();
 
-  // Credit sale: 12 × ₦1,500 to a new customer, ₦8,000 paid in cash
+  // Credit sale on the till: 12 × ₦1,500 to a new customer, ₦8,000 paid now in cash, the rest owed
   await page.goto("/sales/new");
-  await page.locator("#customer").click();
-  await page.getByRole("button", { name: "New customer" }).click();
+  await page.getByRole("button", { name: "Walk-in" }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "New customer" }).click();
   await page.fill("#cn", "Ada Stores");
   await page.getByRole("button", { name: "Add customer" }).click();
-  await pick(page, page.getByRole("button", { name: "Choose a product" }), "Test");
-  await page.getByLabel("Quantity").fill("12");
-  await page.getByRole("radio", { name: "Part paid" }).click();
-  await page.getByLabel("Amount paid now").fill("8000");
-  await page.getByRole("radio", { name: "Cash" }).click();
-  await expect(page.locator("text=₦18,000").first()).toBeVisible();
-  await page.getByRole("button", { name: "Save sale" }).last().click();
-  await page.waitForURL("**/sales/*?new=1");
-  await expect(page.getByText("Sale saved.")).toBeVisible();
+  await page.getByRole("button", { name: /^Test Juice, ₦1,500/ }).click();
+  await page.getByRole("region", { name: "This sale" }).getByRole("button", { name: /Test Juice/ }).first().click();
+  await page.getByRole("dialog").getByLabel("Quantity").fill("12");
+  await page.getByRole("dialog").getByRole("button", { name: "Save" }).click();
+  await page.getByRole("button", { name: "Options" }).click();
+  await page.fill("#tpart", "8000");
+  await page.getByRole("button", { name: "Done" }).click();
+  await page.getByRole("radio", { name: "Owes" }).click();
+  await expect(page.getByRole("button", { name: /Save as owed\s*₦18,000/ })).toBeVisible();
+  await page.getByRole("button", { name: /Save as owed/ }).click();
+  const done = page.getByRole("dialog", { name: "Sale saved" });
+  await expect(done).toBeVisible();
+  await expect(done).toContainText("₦8,000 paid, ₦10,000 to pay later");
+  await expect(done.getByRole("link", { name: "WhatsApp receipt" })).toHaveAttribute("href", /^https:\/\/wa\.me\/\?text=/);
+  await done.getByRole("link", { name: /View full receipt/ }).click();
+  await page.waitForURL("**/sales/*");
   await expect(page.getByText("Part paid")).toBeVisible();
 
   // Dashboard (today)
   await page.goto("/dashboard?period=today");
+  await expect(page.getByRole("link", { name: /Customers owe you/ })).toContainText("₦10,000");
+  await page.getByText("See the full picture").click();
   const card = (label: string) => page.getByRole("button", { name: new RegExp(`^${label}:`) });
   await expect(card("Revenue")).toContainText("₦18k");
   await expect(card("Gross profit")).toContainText("₦5.8k");
   await expect(card("Money you have")).toContainText("₦7k");
-  await expect(page.getByRole("link", { name: /Customers owe you/ })).toContainText("₦10k");
   await expect(page.getByRole("link", { name: /Stock value/ })).toContainText("₦8.8k");
 
   // "How was this calculated?" shows the exact FIFO cost
@@ -128,16 +136,18 @@ test("record a production batch and see it in stock (demo data)", async ({ page 
   await page.fill("#password", "ledgr-demo");
   await page.click("button[type=submit]");
   await page.waitForURL("**/dashboard**");
-  await expect(page.getByText("In a nutshell")).toBeVisible();
+  await expect(page.getByRole("button", { name: "See the full picture" }).or(page.getByText("See the full picture"))).toBeVisible();
 
   await page.goto("/inventory/production/new");
-  await pick(page, page.getByRole("button", { name: "Choose product" }), "Zobo");
+  await pick(page, page.getByRole("button", { name: "e.g. Orange juice 50cl" }), "Zobo");
   await page.getByLabel("Quantity").first().fill("50");
-  await pick(page, page.getByRole("button", { name: "Choose ingredient" }), "Sugar");
-  await page.getByLabel("Quantity").nth(1).fill("3");
+  await page.getByRole("button", { name: "Add ingredient" }).click(); // works whether or not Zobo already has a recipe
+  await pick(page, page.getByRole("button", { name: "Choose ingredient" }).last(), "Sugar");
+  await page.getByLabel("Quantity").last().fill("3");
+  await page.getByRole("button", { name: "Add a cost" }).click();
   await page.getByLabel("Amount").fill("5000");
   await page.getByRole("button", { name: "Save batch" }).click();
-  await page.waitForURL("**/inventory/production");
+  await page.waitForURL("**/inventory/production?made=1");
   const row = page.getByRole("row").filter({ hasText: "Zobo 50cl" }).first();
   await expect(row).toContainText("50");
 

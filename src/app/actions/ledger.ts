@@ -1,6 +1,8 @@
 "use server";
 // Every money-changing action in the app. Thin wrappers: validation of money logic lives in the database functions.
 import { z } from "zod";
+import { revalidatePath } from "next/cache";
+import { markAlertsStale } from "@/lib/server/alerts";
 import { post, withCtx, type ActionResult } from "./_run";
 import { read, rpc, humanError } from "@/lib/server/db";
 import { requireCtx } from "@/lib/server/session";
@@ -189,6 +191,15 @@ export async function removeProduct(input: { product_id: string; reason?: string
   return post<"deleted" | "archived" | "restored">("remove_product", p.data);
 }
 
+/** What the "Sale saved" screen needs for a WhatsApp receipt. */
+export async function saleReceiptInfo(id: string) {
+  if (!uuid.safeParse(id).success) return null;
+  const ctx = await requireCtx();
+  const [r] = await ctx.q<{ invoice_no: string; phone: string | null; customer: string; is_walk_in: boolean }>(
+    "select s.invoice_no, c.phone, c.name customer, c.is_walk_in from sales s join customers c on c.id = s.customer_id where s.id = $1 and s.business_id = $2", [id, ctx.business.id]);
+  return r ? { ...r, business: ctx.business.name } : null;
+}
+
 export async function saveCustomer(input: { id?: string; name: string; phone?: string; email?: string; payment_terms_days?: number | null }) {
   const p = z.object({ id: uuid.optional(), name: z.string().trim().min(1, "Enter the customer's name."), phone: z.string().max(30).optional(),
     email: z.string().email("Enter a valid email.").or(z.literal("")).optional(), payment_terms_days: z.number().int().min(0).max(365).nullable().optional() }).safeParse(input);
@@ -217,22 +228,47 @@ export async function saveSupplier(input: { id?: string; name: string; phone?: s
 }
 
 // ---------- Production ----------
+/** Save (or replace) the recipe for a product. Empty items removes it. */
+export async function saveRecipe(input: { product_id: string; yield_qty: number; items: { ingredient_id: string; qty: number }[]; notes?: string }) {
+  const p = z.object({ product_id: uuid, yield_qty: z.number().positive("How many does one batch make?"), notes: z.string().max(300).optional(),
+    items: z.array(z.object({ ingredient_id: uuid, qty: z.number().positive() })) }).safeParse(input);
+  if (!p.success) return bad(p.error);
+  return post<string | null>("save_recipe", p.data, ["/inventory/production/new", "/inventory/recipes"]);
+}
+
 export async function postProduction(input: { product_id: string; qty: number; date: string; batch_no?: string; notes?: string;
-  materials: { product_id: string; qty: number }[]; costs: { kind: string; amount: number; description?: string; account_id?: string | null }[] }) {
+  materials: { product_id: string; qty: number }[]; costs: { kind: string; amount: number; description?: string; account_id?: string | null }[]; saveRecipe?: boolean }) {
   const p = z.object({
     product_id: uuid, qty: qty, date, batch_no: z.string().max(40).optional(), notes: z.string().max(500).optional(),
     materials: z.array(z.object({ product_id: uuid, qty })),
     costs: z.array(z.object({ kind: z.enum(["materials", "labour", "packaging", "transport", "other"]), amount: kobo, description: z.string().max(100).optional(), account_id: uuid.nullable().optional() })),
+    saveRecipe: z.boolean().optional(),
   }).safeParse(input);
   if (!p.success) return bad(p.error);
   const d = p.data;
-  return post("post_production", {
+  const ctx = await requireCtx();
+  const payload = {
     product_id: d.product_id, qty: d.qty, date: d.date, batch_no: d.batch_no, notes: d.notes,
     costs: [
       ...d.materials.map((m) => ({ kind: "materials", consumed_product_id: m.product_id, consumed_qty: m.qty })),
       ...d.costs.filter((c) => c.amount > 0).map((c) => ({ kind: c.kind, amount: c.amount, description: c.description, account_id: c.account_id ?? undefined })),
     ],
-  });
+  };
+  // The recipe (when asked) and the batch are saved together: both or neither.
+  try {
+    const id = await ctx.db(async (db) => {
+      if (d.saveRecipe && d.materials.length) {
+        await rpc(db, "save_recipe", { business_id: ctx.business.id, product_id: d.product_id, yield_qty: d.qty, items: d.materials.map((m) => ({ ingredient_id: m.product_id, qty: m.qty })) });
+      }
+      return rpc<string>(db, "post_production", { business_id: ctx.business.id, ...payload });
+    });
+    markAlertsStale(ctx.business.id);
+    revalidatePath("/", "layout");
+    return { ok: true as const, data: id };
+  } catch (e) {
+    const h = humanError(e);
+    return { ok: false as const, error: h.message, code: h.code };
+  }
 }
 
 // ---------- Budgets ----------

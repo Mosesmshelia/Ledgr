@@ -412,7 +412,7 @@ function InviteSheet({ onClose, onCreated }: { onClose: () => void; onCreated: (
         <Field label="Role">
           <div className="flex flex-col gap-2">
             {(["admin", "accountant", "sales", "viewer"] as const).map((r) => (
-              <label key={r} className={cn("flex items-start gap-3 rounded-[12px] border p-3 cursor-pointer", role === r ? "border-accent bg-accent-soft" : "border-hairline")}>
+              <label key={r} className={cn("flex items-start gap-3 rounded-[14px] border p-3 cursor-pointer", role === r ? "border-accent bg-accent-soft" : "border-hairline")}>
                 <input type="radio" name="role" checked={role === r} onChange={() => setRole(r)} className="mt-1 accent-[var(--accent)]" />
                 <span><span className="block text-body font-medium">{ROLE_INFO[r].label}</span><span className="block text-caption text-ink-2">{ROLE_INFO[r].summary}</span></span>
               </label>
@@ -436,7 +436,7 @@ function LinkSheet({ link, onClose }: { link: string; onClose: () => void }) {
     <Sheet open onClose={onClose} title="Invitation ready" footer={<Button size="lg" className="w-full" onClick={onClose}>Done</Button>}>
       <div className="flex flex-col gap-4">
         <p className="text-body">Send this link by WhatsApp, SMS or email. It works once, only for the email you entered.</p>
-        <div className="flex items-center gap-2 rounded-[12px] bg-fill px-3 py-2.5">
+        <div className="flex items-center gap-2 rounded-[14px] bg-fill px-3 py-2.5">
           <Link2 size={16} className="text-ink-2 shrink-0" />
           <code className="text-caption break-all flex-1">{link}</code>
         </div>

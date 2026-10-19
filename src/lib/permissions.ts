@@ -43,6 +43,7 @@ export const ROUTE_RULES: { prefix: string; need: Capability; fallback: string }
   { prefix: "/money", need: "reports", fallback: "/dashboard" },
   { prefix: "/reports", need: "reports", fallback: "/dashboard" },
   { prefix: "/settings", need: "settings", fallback: "/dashboard" },
+  { prefix: "/shopping", need: "reports", fallback: "/dashboard" },
 ];
 
 export function routeFallback(role: Role, path: string): string | null {

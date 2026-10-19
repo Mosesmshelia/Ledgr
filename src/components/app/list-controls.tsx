@@ -50,12 +50,12 @@ export function ListControls({ search, filters = [], sorts = [], dates = true, k
             <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-3" aria-hidden />
             <input type="search" value={q} onChange={(e) => onSearch(e.target.value)} placeholder={search} aria-label={search}
               onKeyDown={(e) => { if (e.key === "Enter") { if (timer.current) clearTimeout(timer.current); set({ q: q.trim() || undefined }); } }}
-              className="h-10 w-full rounded-[10px] bg-fill pl-9 pr-3 text-body outline-none border border-transparent focus:border-accent focus:bg-surface" />
+              className="h-10 w-full rounded-[12px] bg-fill pl-9 pr-3 text-body outline-none border border-transparent focus:border-accent focus:bg-surface" />
           </div>
         )}
         {dates && (
           <button type="button" onClick={() => setShowDates(!showDates)} aria-expanded={showDates}
-            className={cn("h-10 px-3.5 rounded-[10px] inline-flex items-center gap-2 text-body border", showDates || sp.get("from") || sp.get("to") ? "bg-accent-soft text-accent border-transparent" : "bg-fill border-transparent text-ink-2 hover:text-ink")}>
+            className={cn("h-10 px-3.5 rounded-[12px] inline-flex items-center gap-2 text-body border", showDates || sp.get("from") || sp.get("to") ? "bg-accent-soft text-accent border-transparent" : "bg-fill border-transparent text-ink-2 hover:text-ink")}>
             <CalendarRange size={16} aria-hidden />Dates
           </button>
         )}
@@ -63,7 +63,7 @@ export function ListControls({ search, filters = [], sorts = [], dates = true, k
           <label key={f.param} className="relative inline-flex items-center">
             <span className="sr-only">{f.label}</span>
             <select value={sp.get(f.param) ?? ""} onChange={(e) => set({ [f.param]: e.target.value || undefined })}
-              className={cn("h-10 max-w-[200px] rounded-[10px] px-3 text-body outline-none border border-transparent focus:border-accent appearance-none truncate",
+              className={cn("h-10 max-w-[200px] rounded-[12px] px-3 text-body outline-none border border-transparent focus:border-accent appearance-none truncate",
                 sp.get(f.param) ? "bg-accent-soft text-accent" : "bg-fill text-ink")}>
               <option value="">{f.allLabel ?? `All ${f.label.toLowerCase()}`}</option>
               {f.options.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
@@ -75,7 +75,7 @@ export function ListControls({ search, filters = [], sorts = [], dates = true, k
             <span className="sr-only">Sort by</span>
             <ArrowDownUp size={15} className="absolute left-3 text-ink-2 pointer-events-none" aria-hidden />
             <select value={sortVal === ":" ? "" : sortVal} onChange={(e) => { const [s, d] = e.target.value.split(":"); set({ sort: s || undefined, dir: d || undefined }); }}
-              className="h-10 rounded-[10px] bg-fill pl-9 pr-3 text-body text-ink outline-none border border-transparent focus:border-accent appearance-none">
+              className="h-10 rounded-[12px] bg-fill pl-9 pr-3 text-body text-ink outline-none border border-transparent focus:border-accent appearance-none">
               <option value="">{defaultSort}</option>
               {sorts.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
             </select>
@@ -116,10 +116,10 @@ function DateRange({ from, to, onChange }: { from: string; to: string; onChange:
   return (
     <div className="flex flex-wrap items-center gap-2 animate-rise">
       <input type="date" aria-label="From date" value={from} max={to || undefined} onChange={(e) => onChange(e.target.value, to)}
-        className="h-10 rounded-[10px] bg-fill px-3 text-body border border-transparent focus:border-accent outline-none" />
+        className="h-10 rounded-[12px] bg-fill px-3 text-body border border-transparent focus:border-accent outline-none" />
       <span className="text-ink-3" aria-hidden>–</span>
       <input type="date" aria-label="To date" value={to} min={from || undefined} onChange={(e) => onChange(from, e.target.value)}
-        className="h-10 rounded-[10px] bg-fill px-3 text-body border border-transparent focus:border-accent outline-none" />
+        className="h-10 rounded-[12px] bg-fill px-3 text-body border border-transparent focus:border-accent outline-none" />
       <div className="flex gap-1.5 flex-wrap">
         {presets.map(([l, f]) => (
           <button key={l} type="button" onClick={() => { const [a, b] = f(); onChange(a, b); }}

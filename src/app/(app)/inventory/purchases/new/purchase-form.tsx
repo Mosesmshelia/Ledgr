@@ -91,14 +91,14 @@ export function PurchaseForm({ opts, terms }: { opts: FormOptions; terms: number
                     <Combobox value={l.product_id} onChange={(id) => setLines(lines.map((x) => x.key === l.key ? { ...x, product_id: id } : x))} placeholder="Choose a product"
                       options={opts.products.map((p) => ({ value: p.id, label: p.name, group: p.is_sellable ? "Products" : "Raw materials", hint: `${formatQty(p.on_hand, p.unit)} in stock${p.avg_cost ? ` · last ≈ ${formatMoney(p.avg_cost)}` : ""}` }))} />
                   </div>
-                  {lines.length > 1 && <button type="button" onClick={() => setLines(lines.filter((x) => x.key !== l.key))} className="size-11 grid place-items-center rounded-[10px] text-ink-3 hover:text-negative hover:bg-negative-soft" aria-label="Remove"><Trash2 size={17} /></button>}
+                  {lines.length > 1 && <button type="button" onClick={() => setLines(lines.filter((x) => x.key !== l.key))} className="size-11 grid place-items-center rounded-[12px] text-ink-3 hover:text-negative hover:bg-negative-soft" aria-label="Remove"><Trash2 size={17} /></button>}
                 </div>
                 {p && (
                   <div className="grid grid-cols-2 sm:grid-cols-[140px_1fr_1fr] gap-3">
                     <Field label={`Quantity${p.unit !== "unit" ? ` (${p.unit})` : ""}`}><QtyInput value={l.qty} onChange={(q) => setLines(lines.map((x) => x.key === l.key ? { ...x, qty: q } : x))} /></Field>
                     <Field label="Cost each"><MoneyInput aria-label="Cost each" value={l.unit_cost} onChange={(v) => setLines(lines.map((x) => x.key === l.key ? { ...x, unit_cost: v } : x))} /></Field>
                     <Field label="Landed cost each" className="col-span-2 sm:col-span-1" hint="Including extra costs below.">
-                      <div className="h-11 flex items-center rounded-[10px] px-3 bg-surface-2 border border-hairline num">{landed !== undefined ? formatMoney(Math.round(landed), { exact: landed < 10_000 }) : "—"}</div>
+                      <div className="h-11 flex items-center rounded-[12px] px-3 bg-surface-2 border border-hairline num">{landed !== undefined ? formatMoney(Math.round(landed), { exact: landed < 10_000 }) : "—"}</div>
                     </Field>
                   </div>
                 )}
@@ -118,7 +118,7 @@ export function PurchaseForm({ opts, terms }: { opts: FormOptions; terms: number
               <option value="shipping">Transport / shipping</option><option value="customs">Customs duty</option><option value="clearing">Clearing</option><option value="packaging">Packaging</option><option value="other">Other</option>
             </Select>
             <MoneyInput value={c.amount} onChange={(v) => setCosts(costs.map((x) => x.key === c.key ? { ...x, amount: v } : x))} aria-label="Amount" />
-            <button type="button" onClick={() => setCosts(costs.filter((x) => x.key !== c.key))} className="size-11 grid place-items-center rounded-[10px] text-ink-3 hover:text-negative hover:bg-negative-soft" aria-label="Remove cost"><Trash2 size={17} /></button>
+            <button type="button" onClick={() => setCosts(costs.filter((x) => x.key !== c.key))} className="size-11 grid place-items-center rounded-[12px] text-ink-3 hover:text-negative hover:bg-negative-soft" aria-label="Remove cost"><Trash2 size={17} /></button>
           </div>
         ))}
         <div className="flex flex-wrap items-center gap-3">
@@ -137,7 +137,7 @@ export function PurchaseForm({ opts, terms }: { opts: FormOptions; terms: number
         {payMode !== "full" && <p className="text-caption text-ink-2">The balance will show under &ldquo;You owe suppliers&rdquo;, due in {terms} days.</p>}
       </Card>
 
-      <div className="flex items-center justify-between gap-4 bg-surface border border-hairline rounded-[16px] p-4 sticky bottom-[calc(72px+env(safe-area-inset-bottom))] lg:bottom-4">
+      <div className="flex items-center justify-between gap-4 bg-surface border border-hairline rounded-[20px] p-4 sticky bottom-[calc(72px+env(safe-area-inset-bottom))] lg:bottom-4">
         <div>
           <div className="text-caption text-ink-2">Total {calc.dc > 0 && <span className="num">(incl. {formatMoney(calc.dc)} extra costs)</span>}</div>
           <div className="text-title font-semibold num">{formatMoney(calc.total, { exact: calc.total % 100 !== 0 })}</div>

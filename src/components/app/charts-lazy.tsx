@@ -5,8 +5,8 @@ import dynamic from "next/dynamic";
 import { Bone } from "@/components/ui/skeleton";
 
 const Placeholder = ({ h }: { h: string }) => (
-  <div className="bg-surface rounded-[16px] border border-hairline p-5 mt-3" role="status" aria-label="Loading chart">
-    <Bone className="h-5 w-40 mb-5" /><Bone className={`${h} w-full rounded-[12px]`} />
+  <div className="bg-surface rounded-[20px] border border-hairline p-5 mt-3" role="status" aria-label="Loading chart">
+    <Bone className="h-5 w-40 mb-5" /><Bone className={`${h} w-full rounded-[14px]`} />
   </div>
 );
 

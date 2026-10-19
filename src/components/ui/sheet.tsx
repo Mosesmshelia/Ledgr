@@ -30,7 +30,7 @@ export function Sheet({ open, onClose, title, subtitle, children, footer, wide }
       <div
         className={cn(
           "bg-raised text-ink w-full sm:w-[min(92vw,var(--w))] max-h-[92dvh] flex flex-col shadow-[var(--shadow-sheet)]",
-          "rounded-t-[16px] sm:rounded-[16px] animate-[sheet-in_220ms_var(--ease-apple)]",
+          "rounded-t-[26px] sm:rounded-[24px] animate-[sheet-in_220ms_var(--ease-apple)]",
         )}
         style={{ ["--w" as string]: wide ? "720px" : "480px" }}
       >

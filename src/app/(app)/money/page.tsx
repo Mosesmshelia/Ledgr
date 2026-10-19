@@ -46,7 +46,7 @@ export default async function MoneyPage({ searchParams }: { searchParams: Promis
       <PageHeader title="Money" subtitle={<>You have <Money value={total} className="text-ink font-medium" /> across {accounts.length} accounts.</>}
         actions={can(ctx.role, "record") && <><MoveMoneyButton accounts={accounts.map((a) => ({ id: a.account_id, name: a.name }))} today={today} /><CustomerPaymentTrigger open={sp.pay === "customer"} customers={customers} accounts={accounts.map((a) => ({ id: a.account_id, name: a.name, type: a.type }))} today={today} /></>} />
 
-      <div className="inline-flex p-0.5 rounded-[10px] bg-fill mb-4 max-w-full overflow-x-auto" role="tablist">
+      <div className="inline-flex p-0.5 rounded-[12px] bg-fill mb-4 max-w-full overflow-x-auto" role="tablist">
         {tabs.map((t) => (
           <Link key={t.key} href={`/money${t.key === "accounts" ? "" : `?tab=${t.key}`}`} role="tab" aria-selected={tab === t.key}
             className={cn("h-8 px-3.5 grid place-items-center rounded-[8px] text-caption font-medium whitespace-nowrap", tab === t.key ? "bg-surface shadow-[0_1px_3px_rgba(0,0,0,0.12)]" : "text-ink-2 hover:text-ink")}>{t.label}</Link>
@@ -120,7 +120,7 @@ function Ageing({ a, label }: { a: ReturnType<typeof ageing>; label: string }) {
       <div className="text-display-sm font-semibold num mt-1"><Money value={a.total} compact /></div>
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mt-4">
         {cells.map((c, i) => (
-          <div key={c.l} className="rounded-[10px] bg-surface-2 border border-hairline px-3 py-2">
+          <div key={c.l} className="rounded-[12px] bg-surface-2 border border-hairline px-3 py-2">
             <div className="text-caption text-ink-2">{c.l}</div>
             <div className={cn("text-body font-medium num", i > 0 && c.v > 0 && "text-negative")}><Money value={c.v} /></div>
           </div>

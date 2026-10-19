@@ -31,7 +31,7 @@ export default async function SalePage({ params, searchParams }: { params: Promi
       <Link href="/sales" className="tap inline-flex items-center gap-1 text-body text-accent mb-3"><ChevronLeft size={18} />Sales</Link>
 
       {sp.new && (
-        <div className="flex items-center gap-2 rounded-[12px] bg-positive-soft text-positive px-4 py-3 mb-4 text-body font-medium">
+        <div className="flex items-center gap-2 rounded-[14px] bg-positive-soft text-positive px-4 py-3 mb-4 text-body font-medium">
           <CheckCircle2 size={18} /> Sale saved.
           <Link href="/sales/new" className="ml-auto text-accent">New sale</Link>
         </div>
@@ -53,7 +53,7 @@ export default async function SalePage({ params, searchParams }: { params: Promi
       </div>
 
       {sale.voided_at && (
-        <div className="rounded-[12px] bg-fill px-4 py-3 mb-4 text-body">
+        <div className="rounded-[14px] bg-fill px-4 py-3 mb-4 text-body">
           <span className="font-medium">Voided.</span> <span className="text-ink-2">Reason: {sale.void_reason}. It no longer counts in any totals.</span>
         </div>
       )}

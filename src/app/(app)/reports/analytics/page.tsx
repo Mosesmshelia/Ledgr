@@ -44,7 +44,7 @@ export default async function Analytics({ searchParams }: { searchParams: Promis
       </div>
       <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
         <PeriodSelector value={key} basePath="/reports/analytics" from={custom?.from} to={custom?.to} today={today} />
-        <div role="tablist" aria-label="Group by" className="inline-flex p-0.5 rounded-[10px] bg-fill">
+        <div role="tablist" aria-label="Group by" className="inline-flex p-0.5 rounded-[12px] bg-fill">
           {(["day", "week", "month"] as const).map((g) => (
             <Link key={g} href={byHref(g)} role="tab" aria-selected={grain === g} scroll={false}
               className={cn("h-8 px-3 grid place-items-center rounded-[8px] text-caption font-medium", grain === g ? "bg-surface shadow-[0_1px_3px_rgba(0,0,0,0.12)]" : "text-ink-2 hover:text-ink")}>
@@ -81,7 +81,7 @@ export default async function Analytics({ searchParams }: { searchParams: Promis
 
 function Fig({ label, value, sub }: { label: string; value: React.ReactNode; sub?: string }) {
   return (
-    <div className="bg-surface rounded-[16px] border border-hairline p-4">
+    <div className="bg-surface rounded-[20px] border border-hairline p-4">
       <div className="text-caption font-medium text-ink-2">{label}</div>
       <div className="text-title font-semibold num mt-1">{value}</div>
       {sub && <div className="text-caption text-warning">{sub}</div>}

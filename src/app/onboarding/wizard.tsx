@@ -51,7 +51,7 @@ export function Wizard({ today, ownerName }: { today: string; ownerName: string 
   return (
     <div className="min-h-dvh flex flex-col">
       <header className="px-4 sm:px-8 h-16 flex items-center justify-between max-w-3xl w-full mx-auto">
-        <span className="flex items-center gap-2"><span className="size-8 rounded-[9px] bg-accent text-on-accent grid place-items-center font-semibold">L</span><span className="font-semibold">Ledgr</span></span>
+        <span className="flex items-center gap-2"><span className="size-8 rounded-[10px] bg-[#111318] dark:bg-white text-white dark:text-[#111318] grid place-items-center font-bold">L</span><span className="font-semibold">Ledgr</span></span>
         <span className="text-caption text-ink-2 num">Step {step + 1} of {STEPS.length}</span>
       </header>
       <div className="max-w-3xl w-full mx-auto px-4 sm:px-8">
@@ -89,7 +89,7 @@ export function Wizard({ today, ownerName }: { today: string; ownerName: string 
                   </Select>
                 </Field>
                 <Field label={i === 0 ? "Balance today" : ""}><MoneyInput value={a.opening_balance} onChange={(v) => setAccounts(accounts.map((x, j) => j === i ? { ...x, opening_balance: v } : x))} aria-label="Balance today" /></Field>
-                <button type="button" onClick={() => setAccounts(accounts.filter((_, j) => j !== i))} disabled={accounts.length === 1} className="size-11 grid place-items-center rounded-[10px] text-ink-3 hover:text-negative disabled:opacity-30" aria-label="Remove account"><Trash2 size={17} /></button>
+                <button type="button" onClick={() => setAccounts(accounts.filter((_, j) => j !== i))} disabled={accounts.length === 1} className="size-11 grid place-items-center rounded-[12px] text-ink-3 hover:text-negative disabled:opacity-30" aria-label="Remove account"><Trash2 size={17} /></button>
               </div>
             ))}
             <Button variant="secondary" size="sm" className="self-start" onClick={() => setAccounts([...accounts, { name: "POS", type: "pos", opening_balance: 0 }])}><Plus size={15} />Add account</Button>
@@ -101,7 +101,7 @@ export function Wizard({ today, ownerName }: { today: string; ownerName: string 
             {recurring.map((r, i) => {
               const eq = r.amount ? equivalents({ amount: r.amount, frequency: r.frequency }) : null;
               return (
-                <div key={r.name} className={cn("rounded-[12px] border p-3 transition-colors", r.on ? "border-accent bg-accent-soft/40" : "border-hairline bg-surface")}>
+                <div key={r.name} className={cn("rounded-[14px] border p-3 transition-colors", r.on ? "border-accent bg-accent-soft/40" : "border-hairline bg-surface")}>
                   <label className="flex items-center gap-3 cursor-pointer">
                     <span className={cn("size-5 rounded-[6px] border grid place-items-center", r.on ? "bg-accent border-accent text-on-accent" : "border-hairline-strong")}>{r.on && <Check size={13} strokeWidth={3} />}</span>
                     <input type="checkbox" className="sr-only" checked={r.on} onChange={(e) => setRecurring(recurring.map((x, j) => j === i ? { ...x, on: e.target.checked } : x))} />
@@ -125,10 +125,10 @@ export function Wizard({ today, ownerName }: { today: string; ownerName: string 
         {step === 3 && (
           <Step title="What do you sell?" body="Add a few products now, or import the rest later. If you have stock, tell us how many and what each cost you.">
             {products.map((p, i) => (
-              <div key={i} className="rounded-[12px] border border-hairline bg-surface p-3 flex flex-col gap-2">
+              <div key={i} className="rounded-[14px] border border-hairline bg-surface p-3 flex flex-col gap-2">
                 <div className="flex gap-2">
                   <Input value={p.name} onChange={(e) => setProducts(products.map((x, j) => j === i ? { ...x, name: e.target.value } : x))} placeholder="Product name" aria-label="Product name" />
-                  {products.length > 1 && <button type="button" onClick={() => setProducts(products.filter((_, j) => j !== i))} className="size-11 shrink-0 grid place-items-center rounded-[10px] text-ink-3 hover:text-negative" aria-label="Remove"><Trash2 size={17} /></button>}
+                  {products.length > 1 && <button type="button" onClick={() => setProducts(products.filter((_, j) => j !== i))} className="size-11 shrink-0 grid place-items-center rounded-[12px] text-ink-3 hover:text-negative" aria-label="Remove"><Trash2 size={17} /></button>}
                 </div>
                 <div className="grid grid-cols-3 gap-2">
                   <Field label="Price"><MoneyInput aria-label="Price" value={p.selling_price} onChange={(v) => setProducts(products.map((x, j) => j === i ? { ...x, selling_price: v } : x))} /></Field>

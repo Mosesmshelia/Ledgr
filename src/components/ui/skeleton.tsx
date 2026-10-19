@@ -16,7 +16,7 @@ function Frame({ label, children }: { label: string; children: React.ReactNode }
 }
 
 function CardBone({ className, children }: { className?: string; children?: React.ReactNode }) {
-  return <div className={cn("bg-surface rounded-[16px] border border-hairline p-5", className)} aria-hidden>{children}</div>;
+  return <div className={cn("bg-surface rounded-[20px] border border-hairline p-5", className)} aria-hidden>{children}</div>;
 }
 
 function Header({ actions = true }: { actions?: boolean }) {
@@ -43,7 +43,7 @@ export function DashboardSkeleton() {
         {Array.from({ length: 4 }).map((_, i) => <CardBone key={i} className="p-4 flex flex-col gap-2.5"><Bone className="h-3.5 w-24" /><Bone className="h-6 w-20" /></CardBone>)}
       </div>
       <CardBone className="mt-3 flex flex-col gap-2.5"><Bone className="h-5 w-32" /><Bone className="h-4 w-full" /><Bone className="h-4 w-11/12" /><Bone className="h-4 w-2/3" /></CardBone>
-      <CardBone className="mt-3"><Bone className="h-5 w-40 mb-5" /><Bone className="h-56 w-full rounded-[12px]" /></CardBone>
+      <CardBone className="mt-3"><Bone className="h-5 w-40 mb-5" /><Bone className="h-56 w-full rounded-[14px]" /></CardBone>
     </Frame>
   );
 }
@@ -52,7 +52,7 @@ export function ListSkeleton({ label = "this page", rows = 8 }: { label?: string
   return (
     <Frame label={label}>
       <Header />
-      <div className="flex gap-2 mb-3"><Bone className="h-10 flex-1 max-w-sm rounded-[10px]" /><Bone className="h-10 w-24 rounded-full" /><Bone className="h-10 w-24 rounded-full hidden sm:block" /></div>
+      <div className="flex gap-2 mb-3"><Bone className="h-10 flex-1 max-w-sm rounded-[12px]" /><Bone className="h-10 w-24 rounded-full" /><Bone className="h-10 w-24 rounded-full hidden sm:block" /></div>
       <CardBone className="p-0 overflow-hidden">
         {Array.from({ length: rows }).map((_, i) => (
           <div key={i} className="flex items-center gap-4 px-5 py-3.5 border-t border-hairline first:border-0">
@@ -100,10 +100,10 @@ export function FormSkeleton({ label = "the form" }: { label?: string }) {
       <Bone className="h-4 w-20 mb-4" />
       <Header actions={false} />
       <CardBone className="grid sm:grid-cols-3 gap-4">
-        {Array.from({ length: 3 }).map((_, i) => <div key={i} className="flex flex-col gap-2"><Bone className="h-3.5 w-20" /><Bone className="h-11 w-full rounded-[10px]" /></div>)}
+        {Array.from({ length: 3 }).map((_, i) => <div key={i} className="flex flex-col gap-2"><Bone className="h-3.5 w-20" /><Bone className="h-11 w-full rounded-[12px]" /></div>)}
       </CardBone>
       <CardBone className="mt-3 flex flex-col gap-3">
-        {Array.from({ length: 3 }).map((_, i) => <div key={i} className="flex gap-3"><Bone className="h-11 flex-1 rounded-[10px]" /><Bone className="h-11 w-28 rounded-[10px]" /><Bone className="h-11 w-28 rounded-[10px]" /></div>)}
+        {Array.from({ length: 3 }).map((_, i) => <div key={i} className="flex gap-3"><Bone className="h-11 flex-1 rounded-[12px]" /><Bone className="h-11 w-28 rounded-[12px]" /><Bone className="h-11 w-28 rounded-[12px]" /></div>)}
       </CardBone>
     </Frame>
   );

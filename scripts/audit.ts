@@ -23,7 +23,7 @@ async function pages(page: Page) {
   await page.goto(BASE + "/money?tab=payables", { waitUntil: "networkidle" });
   const supplier = await page.locator("a[href^='/money/suppliers/']").first().getAttribute("href");
   const all = ["/dashboard", "/sales", sale!, "/sales/new", "/inventory", product!, "/inventory/purchases", "/inventory/purchases/new",
-    "/inventory/production", "/inventory/production/new", "/expenses", "/money", "/money?tab=cashflow", "/money?tab=receivables", "/money?tab=payables",
+    "/inventory/production", "/inventory/production/new", "/shopping", "/expenses", "/money", "/money?tab=cashflow", "/money?tab=receivables", "/money?tab=payables",
     customer!, supplier!, "/reports", "/reports/pnl", "/reports/weekly", "/reports/analytics", "/reports/budget", "/reports/budget/edit",
     "/reports/cashflow", "/reports/inventory", "/settings?tab=business", "/settings?tab=accounts", "/settings?tab=categories",
     "/settings?tab=targets", "/settings?tab=alerts", "/settings?tab=team", "/settings?tab=activity"];

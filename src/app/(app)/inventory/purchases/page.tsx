@@ -36,7 +36,7 @@ export default async function PurchasesPage({ searchParams }: { searchParams: Pr
 
   return (
     <div className="animate-rise">
-      <PageHeader title="Inventory" subtitle="Stock you've bought. It becomes a cost only when you sell it."
+      <PageHeader title="Stock" subtitle="Stock you've bought. It becomes a cost only when you sell it."
         actions={can(ctx.role, "record") ? <ButtonLink href="/inventory/purchases/new">Add purchase</ButtonLink> : undefined} />
       <InventoryTabs active="purchases" />
       <ListControls search="Search supplier, invoice or product"

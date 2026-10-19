@@ -57,7 +57,7 @@ export default async function CustomerStatement({ params, searchParams }: { para
 
 function Box({ label, value, sub, tone }: { label: string; value: React.ReactNode; sub?: string; tone?: "negative" }) {
   return (
-    <div className="bg-surface rounded-[16px] border border-hairline p-4">
+    <div className="bg-surface rounded-[20px] border border-hairline p-4">
       <div className="text-caption font-medium text-ink-2">{label}</div>
       <div className={cn("text-title font-semibold num mt-1", tone === "negative" && "text-negative")}>{value}</div>
       {sub && <div className="text-caption text-ink-3">{sub}</div>}

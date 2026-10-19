@@ -20,7 +20,7 @@ export function Figures({ r }: { r: ReportData }) {
   return (
     <div className={cn("grid grid-cols-2 gap-3 mb-3", r.figures.length === 4 ? "lg:grid-cols-4" : r.figures.length >= 5 ? "lg:grid-cols-6" : "lg:grid-cols-3")}>
       {r.figures.map((f) => (
-        <div key={f.label} className="bg-surface rounded-[16px] border border-hairline p-4">
+        <div key={f.label} className="bg-surface rounded-[20px] border border-hairline p-4">
           <div className="text-caption font-medium text-ink-2">{f.label}</div>
           <div className={cn("text-title font-semibold num mt-1", f.tone === "negative" && "text-negative", f.tone === "warning" && "text-warning")}
             title={f.type === "money" && f.value !== null ? formatMoney(f.value, { exact: true }) : undefined}>

@@ -154,22 +154,22 @@ async function Activity({ ctx, sp }: { ctx: Awaited<ReturnType<typeof requireCtx
     <>
       <form className="grid grid-cols-2 sm:grid-cols-5 gap-2 mb-3" action="/settings">
         <input type="hidden" name="tab" value="activity" />
-        <select name="table" defaultValue={sp.table ?? ""} className="h-10 rounded-[10px] bg-fill px-3 text-body" aria-label="Record type">
+        <select name="table" defaultValue={sp.table ?? ""} className="h-10 rounded-[12px] bg-fill px-3 text-body" aria-label="Record type">
           <option value="">All records</option>
           {Object.entries(TABLE_LABEL).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
         </select>
-        <select name="action" defaultValue={sp.action ?? ""} className="h-10 rounded-[10px] bg-fill px-3 text-body" aria-label="What happened">
+        <select name="action" defaultValue={sp.action ?? ""} className="h-10 rounded-[12px] bg-fill px-3 text-body" aria-label="What happened">
           <option value="">Any change</option>
           {Object.entries(ACTION).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
         </select>
-        <select name="user" defaultValue={sp.user ?? ""} className="h-10 rounded-[10px] bg-fill px-3 text-body" aria-label="Person">
+        <select name="user" defaultValue={sp.user ?? ""} className="h-10 rounded-[12px] bg-fill px-3 text-body" aria-label="Person">
           <option value="">Anyone</option>
           {people.map((p) => <option key={p.user_id} value={p.user_id}>{p.name || p.email}</option>)}
         </select>
-        <input type="date" name="from" defaultValue={sp.from} className="h-10 rounded-[10px] bg-fill px-3 text-body" aria-label="From" />
+        <input type="date" name="from" defaultValue={sp.from} className="h-10 rounded-[12px] bg-fill px-3 text-body" aria-label="From" />
         <div className="flex gap-2 col-span-2 sm:col-span-1">
-          <input type="date" name="to" defaultValue={sp.to} className="h-10 min-w-0 flex-1 rounded-[10px] bg-fill px-3 text-body" aria-label="To" />
-          <button className="h-10 px-3.5 rounded-[10px] bg-accent text-on-accent text-body font-medium">Filter</button>
+          <input type="date" name="to" defaultValue={sp.to} className="h-10 min-w-0 flex-1 rounded-[12px] bg-fill px-3 text-body" aria-label="To" />
+          <button className="h-10 px-3.5 rounded-[12px] bg-accent text-on-accent text-body font-medium">Filter</button>
         </div>
       </form>
       <p className="text-caption text-ink-2 mb-3">Every change is recorded here and can&apos;t be edited or deleted — not even by the owner.</p>

@@ -22,7 +22,7 @@ export function PurchaseRowActions({ id, supplierId, outstanding, total, account
     <div className="relative">
       <button onClick={() => setMenu(!menu)} className="size-8 grid place-items-center rounded-[8px] text-ink-3 hover:bg-fill hover:text-ink" aria-label="Purchase actions"><MoreHorizontal size={17} /></button>
       {menu && (
-        <div className="absolute right-0 top-9 z-20 w-48 bg-raised border border-hairline rounded-[12px] shadow-[var(--shadow-sheet)] p-1" onMouseLeave={() => setMenu(false)}>
+        <div className="absolute right-0 top-9 z-20 w-48 bg-raised border border-hairline rounded-[14px] shadow-[var(--shadow-sheet)] p-1" onMouseLeave={() => setMenu(false)}>
           {outstanding > 0 && supplierId && <button className="w-full text-left h-10 px-3 rounded-[8px] hover:bg-fill text-body" onClick={() => { setMenu(false); setSheet("pay"); }}>Pay supplier</button>}
           <button className="w-full text-left h-10 px-3 rounded-[8px] hover:bg-fill text-body text-negative" onClick={() => { setMenu(false); setSheet("void"); }}>Void purchase</button>
         </div>

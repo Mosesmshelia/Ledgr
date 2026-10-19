@@ -29,7 +29,7 @@ export function Trend({ c, vs, higherIsBetter = true, className }: { c: Comparis
 export function StatusNote({ status, note, href }: { status: Completeness; note?: string; href?: string }) {
   if (status === "complete" || !note) return null;
   return (
-    <div className={cn("flex gap-2 rounded-[10px] px-3 py-2.5 text-caption", status === "missing_data" ? "bg-warning-soft text-warning" : "bg-fill text-ink-2")}>
+    <div className={cn("flex gap-2 rounded-[12px] px-3 py-2.5 text-caption", status === "missing_data" ? "bg-warning-soft text-warning" : "bg-fill text-ink-2")}>
       <AlertTriangle size={15} className="shrink-0 mt-px" aria-hidden />
       <div className="flex-1">
         <span className="text-ink">{note}</span>
@@ -65,7 +65,7 @@ export function MetricCard({ label, value, sub, comparison, vs = "last period", 
         type="button"
         onClick={() => interactive && setOpen(true)}
         className={cn(
-          "group text-left bg-surface rounded-[16px] border border-hairline shadow-[var(--shadow-card)] w-full",
+          "group text-left bg-surface rounded-[20px] border border-hairline shadow-[var(--shadow-card)] w-full",
           size === "hero" ? "p-5 min-h-[148px]" : "p-4",
           interactive ? "cursor-pointer hover:border-hairline-strong transition-colors" : "cursor-default",
         )}
@@ -104,7 +104,7 @@ export function MetricCard({ label, value, sub, comparison, vs = "last period", 
           </div>
           {note && <div className="mt-3"><StatusNote status={status} note={note} /></div>}
           {href && (
-            <Link href={href} className="mt-4 flex items-center justify-between rounded-[12px] bg-fill px-4 h-12 text-body font-medium hover:bg-fill-hover">
+            <Link href={href} className="mt-4 flex items-center justify-between rounded-[14px] bg-fill px-4 h-12 text-body font-medium hover:bg-fill-hover">
               View transactions <ChevronRight size={16} className="text-ink-3" />
             </Link>
           )}

@@ -45,11 +45,11 @@ export default async function ReportPage({ params, searchParams }: { params: Pro
         {r.periodMode === "range" && <PeriodSelector value={key} basePath={`/reports/${kind}`} from={custom?.from} to={custom?.to} today={today} />}
         {r.periodMode === "month" && (
           <div className="flex items-center gap-2 print:hidden">
-            <Link href={`/reports/${kind}?month=${addMonths(month + "-01", -1).slice(0, 7)}`} className="size-9 grid place-items-center rounded-[10px] bg-fill hover:bg-fill-hover" aria-label="Previous month"><ChevronLeft size={17} /></Link>
+            <Link href={`/reports/${kind}?month=${addMonths(month + "-01", -1).slice(0, 7)}`} className="size-9 grid place-items-center rounded-[12px] bg-fill hover:bg-fill-hover" aria-label="Previous month"><ChevronLeft size={17} /></Link>
             <span className="text-body font-medium min-w-36 text-center">{MONTHS[Number(month.slice(5)) - 1]} {month.slice(0, 4)}</span>
             {month < today.slice(0, 7)
-              ? <Link href={`/reports/${kind}?month=${addMonths(month + "-01", 1).slice(0, 7)}`} className="size-9 grid place-items-center rounded-[10px] bg-fill hover:bg-fill-hover" aria-label="Next month"><ChevronRight size={17} /></Link>
-              : <span className="size-9 grid place-items-center rounded-[10px] bg-fill opacity-40" aria-hidden><ChevronRight size={17} /></span>}
+              ? <Link href={`/reports/${kind}?month=${addMonths(month + "-01", 1).slice(0, 7)}`} className="size-9 grid place-items-center rounded-[12px] bg-fill hover:bg-fill-hover" aria-label="Next month"><ChevronRight size={17} /></Link>
+              : <span className="size-9 grid place-items-center rounded-[12px] bg-fill opacity-40" aria-hidden><ChevronRight size={17} /></span>}
           </div>
         )}
         {r.periodMode === "asAt" && <AsAtPicker value={r.to} max={today} />}

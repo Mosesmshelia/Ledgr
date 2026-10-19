@@ -69,7 +69,7 @@ export function AlertBell({ alerts }: { alerts: UiAlert[] }) {
       </button>
       {open && (
         <div role="dialog" aria-label="Alerts"
-          className="absolute right-0 top-11 z-50 w-[min(92vw,380px)] bg-raised rounded-[16px] shadow-[var(--shadow-sheet)] border border-hairline animate-[rise_180ms_var(--ease-apple)]">
+          className="absolute right-0 top-11 z-50 w-[min(92vw,380px)] bg-raised rounded-[20px] shadow-[var(--shadow-sheet)] border border-hairline animate-[rise_180ms_var(--ease-apple)]">
           <div className="flex items-center justify-between px-4 pt-3.5 pb-1">
             <h2 className="text-headline font-semibold">Alerts</h2>
             <Link href="/settings?tab=alerts" onClick={() => setOpen(false)} className="text-caption text-accent">Alert settings</Link>

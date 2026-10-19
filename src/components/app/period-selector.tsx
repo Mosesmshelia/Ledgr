@@ -7,10 +7,10 @@ import { cn, Button, Input, Field } from "@/components/ui/primitives";
 import { Sheet } from "@/components/ui/sheet";
 
 const OPTIONS = [
-  { key: "today", label: "Today" },
-  { key: "this_week", label: "This Week" },
-  { key: "this_month", label: "This Month" },
-  { key: "last_month", label: "Last Month" },
+  { key: "today", label: "Today", short: "Today" },
+  { key: "this_week", label: "This week", short: "Week" },
+  { key: "this_month", label: "This month", short: "Month" },
+  { key: "last_month", label: "Last month", short: "Last month" },
 ];
 
 /** Segmented control + custom range. The period lives in the URL (shareable, back-button friendly). */
@@ -22,17 +22,17 @@ export function PeriodSelector({ value, basePath, from, to, today }: { value: st
   const sep = basePath.includes("?") ? "&" : "?";
   return (
     <div className="flex items-center gap-2 max-w-full">
-      <div role="tablist" aria-label="Period" className="inline-flex p-0.5 rounded-[10px] bg-fill max-w-full overflow-x-auto">
+      <div role="tablist" aria-label="Period" className="inline-flex p-1 rounded-[14px] bg-fill max-w-full overflow-x-auto">
         {OPTIONS.map((o) => (
           <Link key={o.key} role="tab" aria-selected={value === o.key} href={`${basePath}${sep}period=${o.key}`} scroll={false}
-            className={cn("h-8 px-3 sm:px-3.5 grid place-items-center rounded-[8px] text-caption font-medium whitespace-nowrap transition-all",
+            className={cn("h-9 px-3 sm:px-3.5 grid place-items-center rounded-[10px] text-caption font-medium whitespace-nowrap transition-all",
               value === o.key ? "bg-surface text-ink shadow-[0_1px_3px_rgba(0,0,0,0.12)]" : "text-ink-2 hover:text-ink")}>
-            {o.label}
+            <span className="sm:hidden">{o.short}</span><span className="hidden sm:inline">{o.label}</span>
           </Link>
         ))}
       </div>
       <button onClick={() => setOpen(true)} aria-label="Custom date range" title="Custom dates"
-        className={cn("h-9 px-2.5 rounded-[10px] grid place-items-center text-caption font-medium shrink-0",
+        className={cn("h-9 px-2.5 rounded-[12px] grid place-items-center text-caption font-medium shrink-0",
           value === "custom" ? "bg-accent text-on-accent" : "bg-fill text-ink-2 hover:text-ink")}>
         <CalendarRange size={16} />
       </button>

@@ -11,20 +11,21 @@ const twMerge = extendTailwindMerge({ extend: { classGroups: { "font-size": [{ t
 export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
 
 // ---------- Button ----------
-type Variant = "primary" | "secondary" | "ghost" | "destructive" | "plain";
+type Variant = "primary" | "secondary" | "ghost" | "destructive" | "plain" | "soft";
 type Size = "sm" | "md" | "lg";
 const base = "inline-flex items-center justify-center gap-2 font-medium select-none transition-[background,color,transform,box-shadow] duration-150 ease-[var(--ease-apple)] active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap";
 const variants: Record<Variant, string> = {
-  primary: "bg-accent text-on-accent hover:bg-accent-hover",
+  primary: "bg-accent text-on-accent hover:bg-accent-hover shadow-[0_1px_2px_rgba(17,19,24,0.12)]",
   secondary: "bg-fill text-ink hover:bg-fill-hover",
   ghost: "text-accent hover:bg-accent-soft",
+  soft: "bg-accent-soft text-accent hover:brightness-[0.97]",
   destructive: "bg-negative-soft text-negative hover:brightness-95",
   plain: "text-ink-2 hover:text-ink hover:bg-fill",
 };
 const sizes: Record<Size, string> = {
-  sm: "h-8 px-3 text-caption rounded-[8px]",
-  md: "h-10 px-4 text-body rounded-[10px]",
-  lg: "h-12 px-5 text-headline rounded-[12px]",
+  sm: "h-9 px-3.5 text-caption rounded-[12px]",
+  md: "h-11 px-4 text-body rounded-[14px]",
+  lg: "h-14 px-6 text-headline font-semibold rounded-[20px]",
 };
 export function buttonClass(variant: Variant = "primary", size: Size = "md", extra?: string) {
   return cn(base, variants[variant], sizes[size], extra);
@@ -38,7 +39,7 @@ export function ButtonLink({ variant = "primary", size = "md", className, ...p }
 
 // ---------- Surfaces ----------
 export function Card({ className, ...p }: ComponentProps<"div">) {
-  return <div className={cn("bg-surface rounded-[16px] border border-hairline shadow-[var(--shadow-card)]", className)} {...p} />;
+  return <div className={cn("bg-surface rounded-[20px] border border-hairline shadow-[var(--shadow-card)]", className)} {...p} />;
 }
 export function Overline({ className, ...p }: ComponentProps<"div">) {
   return <div className={cn("text-overline uppercase font-semibold text-ink-2", className)} {...p} />;
@@ -48,7 +49,7 @@ export function PageHeader({ title, subtitle, actions }: { title: string; subtit
   return (
     <div className="flex flex-wrap items-end justify-between gap-3 mb-6">
       <div className="min-w-0">
-        <h1 className="text-title font-semibold tracking-tight">{title}</h1>
+        <h1 className="text-title font-bold font-display">{title}</h1>
         {subtitle && <p className="text-body text-ink-2 mt-0.5">{subtitle}</p>}
       </div>
       {actions && <div className="flex items-center gap-2">{actions}</div>}
@@ -92,7 +93,7 @@ export const invoiceStatus: Record<string, { label: string; tone: keyof typeof t
 export function EmptyState({ icon, title, body, action }: { icon?: ReactNode; title: string; body: string; action?: ReactNode }) {
   return (
     <div className="flex flex-col items-center text-center px-6 py-14">
-      {icon && <div className="size-12 rounded-full bg-fill grid place-items-center text-ink-2 mb-4">{icon}</div>}
+      {icon && <div className="size-14 rounded-full bg-accent-soft grid place-items-center text-accent mb-4">{icon}</div>}
       <h3 className="text-headline font-semibold">{title}</h3>
       <p className="text-body text-ink-2 mt-1 max-w-sm">{body}</p>
       {action && <div className="mt-5">{action}</div>}
@@ -110,7 +111,7 @@ export function Field({ label, hint, error, children, className, htmlFor }: { la
     </div>
   );
 }
-export const inputClass = "h-11 w-full rounded-[10px] bg-fill px-3 text-body text-ink placeholder:text-ink-3 outline-none border border-transparent focus:border-accent focus:bg-surface transition-colors";
+export const inputClass = "h-12 w-full rounded-[14px] bg-fill px-3 text-body text-ink placeholder:text-ink-3 outline-none border border-transparent focus:border-accent focus:bg-surface transition-colors";
 export function Input({ className, ...p }: ComponentProps<"input">) {
   return <input className={cn(inputClass, className)} {...p} />;
 }

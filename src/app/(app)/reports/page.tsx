@@ -36,9 +36,9 @@ export default async function ReportsPage() {
           <h2 className="text-overline uppercase font-semibold text-ink-2 mb-2">{g.title}</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {g.items.map((r) => (
-              <Link key={r.href} href={r.href} className="group bg-surface rounded-[16px] border border-hairline p-5 hover:border-hairline-strong transition-colors">
+              <Link key={r.href} href={r.href} className="group bg-surface rounded-[20px] border border-hairline p-5 hover:border-hairline-strong transition-colors">
                 <div className="flex items-center justify-between">
-                  <span className="size-10 rounded-[12px] bg-accent-soft text-accent grid place-items-center"><r.icon size={19} /></span>
+                  <span className="size-10 rounded-[14px] bg-accent-soft text-accent grid place-items-center"><r.icon size={19} /></span>
                   <ChevronRight size={17} className="text-ink-3 group-hover:translate-x-0.5 transition-transform" />
                 </div>
                 <h3 className="text-headline font-semibold mt-4">{r.title}</h3>

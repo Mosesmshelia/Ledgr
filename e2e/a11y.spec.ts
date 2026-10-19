@@ -17,8 +17,8 @@ test("keyboard: skip link, quick-add menu, sheets", async ({ page }) => {
   await page.keyboard.press("Enter");
   await expect(page.locator("main#main")).toBeFocused();
 
-  // The + New menu opens with the keyboard and closes with Escape.
-  await page.getByRole("button", { name: "New", exact: true }).focus();
+  // The + Record menu opens with the keyboard and closes with Escape.
+  await page.getByRole("button", { name: "Record", exact: true }).focus();
   await page.keyboard.press("Enter");
   await expect(page.getByRole("menu")).toBeVisible();
   await expect(page.getByRole("menuitem").first()).toBeFocused();

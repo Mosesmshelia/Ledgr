@@ -33,7 +33,7 @@ export function SaleActions({ sale, items, accounts, today, hasReturns, canVoid,
         <>
           <Button variant="secondary" onClick={() => setMenu(!menu)} aria-label="More actions" aria-expanded={menu}><MoreHorizontal size={18} /></Button>
           {menu && (
-            <div className="absolute right-0 top-12 z-20 w-56 bg-raised border border-hairline rounded-[12px] shadow-[var(--shadow-sheet)] p-1 animate-[rise_140ms_var(--ease-apple)]" onMouseLeave={() => setMenu(false)}>
+            <div className="absolute right-0 top-12 z-20 w-56 bg-raised border border-hairline rounded-[14px] shadow-[var(--shadow-sheet)] p-1 animate-[rise_140ms_var(--ease-apple)]" onMouseLeave={() => setMenu(false)}>
               {items.some((i) => i.returnable > 0) && <MenuItem icon={<RotateCcw size={16} />} label="Return items" onClick={() => { setMenu(false); setSheet("return"); }} />}
               <MenuItem icon={<Ban size={16} />} label="Void sale" danger onClick={() => { setMenu(false); setSheet("void"); }} />
             </div>

@@ -22,7 +22,7 @@ export function TrendSection({ trends }: { trends: Record<Gran, Bucket[]> }) {
     <section aria-label="Trends" className="mt-3">
       <div className="flex flex-wrap items-center justify-between gap-3 mb-3 mt-6">
         <h2 className="text-headline font-semibold">Trends</h2>
-        <div role="tablist" aria-label="Chart range" className="inline-flex p-0.5 rounded-[10px] bg-fill">
+        <div role="tablist" aria-label="Chart range" className="inline-flex p-0.5 rounded-[12px] bg-fill">
           {(Object.keys(GRAN_LABEL) as Gran[]).map((g) => (
             <button key={g} role="tab" aria-selected={gran === g} onClick={() => setGran(g)}
               className={cn("h-8 px-3 rounded-[8px] text-caption font-medium whitespace-nowrap transition-all", gran === g ? "bg-surface text-ink shadow-[0_1px_3px_rgba(0,0,0,0.12)]" : "text-ink-2 hover:text-ink")}>
@@ -79,7 +79,7 @@ export function TrendSection({ trends }: { trends: Record<Gran, Bucket[]> }) {
 function ChartCard({ title, subtitle, legend, table, children, className }: { title: string; subtitle: string; legend: [string, string][]; table: ReactNode; children: React.ReactElement; className?: string }) {
   const [showTable, setShowTable] = useState(false);
   return (
-    <div className={cn("bg-surface rounded-[16px] border border-hairline p-5", className)}>
+    <div className={cn("bg-surface rounded-[20px] border border-hairline p-5", className)}>
       <div className="flex items-start justify-between gap-3">
         <div>
           <h3 className="text-headline font-semibold">{title}</h3>
@@ -118,7 +118,7 @@ function Tip({ active, payload, label, prefix, rows }: { active?: boolean; paylo
   if (!active || !payload?.length) return null;
   const b = payload[0].payload as Bucket;
   return (
-    <div className="bg-raised border border-hairline rounded-[10px] shadow-[var(--shadow-sheet)] px-3 py-2 text-caption num min-w-48">
+    <div className="bg-raised border border-hairline rounded-[12px] shadow-[var(--shadow-sheet)] px-3 py-2 text-caption num min-w-48">
       <div className="font-semibold mb-1">{prefix}{label}</div>
       {rows(b).map(([c, l, v]) => (
         <div key={l} className={cn("flex justify-between gap-4", !c && "border-t border-hairline mt-1 pt-1")}>
@@ -135,7 +135,7 @@ function Tip({ active, payload, label, prefix, rows }: { active?: boolean; paylo
 export function SalesOverTime({ data }: { data: { label: string; revenue: number; sales: number; units: number }[] }) {
   const [table, setTable] = useState(false);
   return (
-    <div className="bg-surface rounded-[16px] border border-hairline p-5">
+    <div className="bg-surface rounded-[20px] border border-hairline p-5">
       <div className="flex items-start justify-between gap-3">
         <div><h3 className="text-headline font-semibold">Revenue over time</h3><p className="text-caption text-ink-2">Net of discounts and returns, excluding VAT</p></div>
         <button onClick={() => setTable(!table)} className="tap text-caption text-accent font-medium">{table ? "Chart" : "Table"}</button>
@@ -158,7 +158,7 @@ export function SalesOverTime({ data }: { data: { label: string; revenue: number
                 if (!active || !payload?.length) return null;
                 const d = payload[0].payload as { revenue: number; sales: number; units: number };
                 return (
-                  <div className="bg-raised border border-hairline rounded-[10px] shadow-[var(--shadow-sheet)] px-3 py-2 text-caption num min-w-40">
+                  <div className="bg-raised border border-hairline rounded-[12px] shadow-[var(--shadow-sheet)] px-3 py-2 text-caption num min-w-40">
                     <div className="font-semibold mb-1">{label}</div>
                     <div className="flex justify-between gap-4"><span className="text-ink-2">Revenue</span><span className="font-medium">{formatMoney(d.revenue)}</span></div>
                     <div className="flex justify-between gap-4"><span className="text-ink-2">Sales</span><span>{d.sales}</span></div>

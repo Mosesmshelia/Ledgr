@@ -19,7 +19,7 @@ function registerFonts() {
   registered = true;
 }
 
-const INK = "#1d1d1f", INK2 = "#6e6e73", INK3 = "#8e8e93", LINE = "#e5e5ea", ACCENT = "#0071e3", WARN = "#b25000", NEG = "#d70015", POS = "#1f8a4c";
+const INK = "#111318", INK2 = "#5b6170", INK3 = "#646a78", LINE = "#e3e5ea", ACCENT = "#2f5bea", WARN = "#b25000", NEG = "#d70015", POS = "#1f8a4c";
 
 const s = StyleSheet.create({
   page: { fontFamily: "Inter", fontSize: 8.5, color: INK, paddingTop: 36, paddingBottom: 44, paddingHorizontal: 36 },
@@ -34,7 +34,7 @@ const s = StyleSheet.create({
   figLabel: { color: INK2, fontSize: 7.5 },
   figValue: { fontSize: 12.5, fontWeight: 600, marginTop: 2 },
   figSub: { color: INK3, fontSize: 7, marginTop: 1 },
-  summary: { backgroundColor: "#f5f5f7", borderRadius: 6, padding: 9, marginBottom: 12 },
+  summary: { backgroundColor: "#f4f5f7", borderRadius: 6, padding: 9, marginBottom: 12 },
   summaryHead: { fontWeight: 600, marginBottom: 3 },
   summaryLine: { lineHeight: 1.35, marginBottom: 2 },
   sectionTitle: { fontSize: 10.5, fontWeight: 600, marginTop: 8, marginBottom: 5 },
