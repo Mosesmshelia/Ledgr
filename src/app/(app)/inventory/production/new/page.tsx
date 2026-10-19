@@ -11,9 +11,12 @@ export default async function NewBatch({ searchParams }: { searchParams: Promise
   const ctx = await requireCap("record", "/inventory/production");
   const sp = await searchParams;
   const opts = await formOptions(ctx);
+  // Recipes need database update 0014; until it's applied the page works without them.
+  let recipesReady = true;
   const rows = await ctx.q<{ product_id: string; yield_qty: number; ingredient_id: string; qty: number }>(`
     select r.product_id, r.yield_qty::float8 yield_qty, i.ingredient_id, i.qty::float8 qty
-    from recipes r join recipe_items i on i.recipe_id = r.id where r.business_id = $1 order by r.product_id, i.id`, [ctx.business.id]);
+    from recipes r join recipe_items i on i.recipe_id = r.id where r.business_id = $1 order by r.product_id, i.id`, [ctx.business.id])
+    .catch(() => { recipesReady = false; return []; });
   const recipes: Recipe[] = [];
   for (const r of rows) {
     let rec = recipes.find((x) => x.product_id === r.product_id);
@@ -26,7 +29,7 @@ export default async function NewBatch({ searchParams }: { searchParams: Promise
       <Link href="/inventory/production" className="tap inline-flex items-center gap-1 text-body text-accent mb-2"><ChevronLeft size={18} />Production</Link>
       <h1 className="text-title font-bold font-display">Made a batch</h1>
       <p className="text-body text-ink-2 mt-0.5 mb-5">Tell Ledgr what you made. It takes the ingredients out of stock and works out what each one cost you.</p>
-      <ProductionForm opts={opts} recipes={recipes} canEditRecipes={can(ctx.role, "record")} initialProduct={initial} />
+      <ProductionForm opts={opts} recipes={recipes} canEditRecipes={recipesReady && can(ctx.role, "record")} initialProduct={initial} />
     </div>
   );
 }
